@@ -90,6 +90,8 @@ export class ModalManager {
     this.isOpen = false;
     AudioFX.playClose();
     this.modalRoot.classList.add('hidden');
+    const card = document.getElementById('modal-card-content');
+    card?.classList.remove('welcome-card');
     GameBridge.emit(EVENTS.SET_INPUT_PAUSED, false);
   }
 
@@ -450,97 +452,103 @@ export class ModalManager {
     const body = document.getElementById('modal-body');
     if (!body) return;
 
+    const card = document.getElementById('modal-card-content');
+    card?.classList.add('welcome-card');
+
     body.innerHTML = `
-      <div class="modal-header-section" style="border-bottom: 2px solid #ffd166;">
+      <div class="modal-header-section" style="border-bottom: 2px solid #ffd166; padding-bottom: 12px;">
         <div class="modal-breadcrumbs">
           <span class="location-crumb" style="color: #ffd166;">Welcome Portal</span>
           <span class="crumb-separator">&bull;</span>
           <span class="station-crumb">Interactive 16-Bit RPG Portfolio</span>
         </div>
         <div class="modal-title-row">
-          <h2 class="modal-title" style="color: #ffd166;">Welcome to My Portfolio</h2>
+          <h2 class="modal-title" style="color: #ffd166; font-size: 16px;">Welcome to My Portfolio</h2>
           <span class="modal-badge" style="border-color: #ffd166; color: #ffd166; background: rgba(255, 209, 102, 0.15);">DIGONTA DAS</span>
         </div>
-        <p class="modal-tagline" style="color: #cbd5e1; font-size: 13px;">
+        <p class="modal-tagline" style="color: #cbd5e1; font-size: 13px; margin: 4px 0 0;">
           Do you want to contact me, send an email to <strong style="color: #ffd166; user-select: all;">digontadas0171@gmail.com</strong>, or explore my interactive RPG world?
         </p>
       </div>
 
       <!-- CENTER HERO EXPLORE BUTTON -->
       <div class="welcome-hero-cta" style="margin: 14px 0; text-align: center;">
-        <button class="modal-btn primary-btn" id="welcome-explore-btn" style="width: 100%; max-width: 480px; margin: 0 auto; padding: 12px 24px; font-size: 14px; font-weight: 800; letter-spacing: 0.5px; justify-content: center; box-shadow: 0 0 24px rgba(255, 209, 102, 0.35);">
+        <button class="modal-btn primary-btn" id="welcome-explore-btn" style="width: 100%; max-width: 520px; margin: 0 auto; padding: 13px 26px; font-size: 14px; font-weight: 800; letter-spacing: 0.6px; justify-content: center; box-shadow: 0 0 24px rgba(255, 209, 102, 0.35);">
           START EXPLORING MY PORTFOLIO
         </button>
       </div>
 
-      <div class="modal-content-grid welcome-grid" style="grid-template-columns: 1.15fr 0.85fr; gap: 20px;">
+      <!-- TWO-COLUMN CONTENT GRID: MESSAGE FORM & FULL-SIZE POKEMON TRAINER CARD -->
+      <div class="modal-content-grid welcome-grid" style="grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch;">
         <!-- LEFT COLUMN: MESSAGE / EMAIL WRITING OPTION -->
-        <div class="modal-main-column">
-          <h4 class="section-heading" style="color: #4deeea;">SEND A DIRECT MESSAGE</h4>
-          <p style="color: #94a3b8; font-size: 12px; margin-bottom: 12px; line-height: 1.5;">
-            Fill in your details below to send an email directly to <strong>digontadas0171@gmail.com</strong>.
-          </p>
+        <div class="modal-main-column" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h4 class="section-heading" style="color: #ffd166; margin-bottom: 4px;">SEND A DIRECT MESSAGE</h4>
+            <p style="color: #94a3b8; font-size: 12px; margin-bottom: 12px; line-height: 1.5;">
+              Fill in your message below to send an email directly to <strong>digontadas0171@gmail.com</strong>.
+            </p>
 
-          <form id="welcome-contact-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 10px;">
-            <div>
-              <label style="display:block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">YOUR EMAIL</label>
-              <input type="email" id="contact-sender-email" placeholder="e.g. recruiter@company.com" required
-                style="width: 100%; box-sizing: border-box; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 9px 12px; color: #fff; font-family: inherit; font-size: 12px; outline: none;" />
-            </div>
+            <form id="welcome-contact-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 10px;">
+              <div>
+                <label style="display:block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">YOUR EMAIL</label>
+                <input type="email" id="contact-sender-email" placeholder="e.g. recruiter@company.com" required
+                  style="width: 100%; box-sizing: border-box; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 6px; padding: 9px 12px; color: #fff; font-family: inherit; font-size: 12px; outline: none;" />
+              </div>
 
-            <div>
-              <label style="display:block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">SUBJECT</label>
-              <input type="text" id="contact-subject" placeholder="e.g. AI Engineering Opportunity / Project Inquiry"
-                style="width: 100%; box-sizing: border-box; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 9px 12px; color: #fff; font-family: inherit; font-size: 12px; outline: none;" />
-            </div>
+              <div>
+                <label style="display:block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">SUBJECT</label>
+                <input type="text" id="contact-subject" placeholder="e.g. AI Engineering Opportunity / Project Inquiry"
+                  style="width: 100%; box-sizing: border-box; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 6px; padding: 9px 12px; color: #fff; font-family: inherit; font-size: 12px; outline: none;" />
+              </div>
 
-            <div>
-              <label style="display:block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">MESSAGE</label>
-              <textarea id="contact-message" rows="3" placeholder="Hello Digonta, I saw your 3D CNN and full-stack projects..."
-                style="width: 100%; box-sizing: border-box; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 9px 12px; color: #fff; font-family: inherit; font-size: 12px; outline: none; resize: vertical;"></textarea>
-            </div>
+              <div>
+                <label style="display:block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">MESSAGE</label>
+                <textarea id="contact-message" rows="4" placeholder="Hello Digonta, I would love to connect regarding an opportunity..."
+                  style="width: 100%; box-sizing: border-box; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 6px; padding: 9px 12px; color: #fff; font-family: inherit; font-size: 12px; outline: none; resize: vertical;"></textarea>
+              </div>
 
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <button type="button" class="modal-btn code-btn" id="send-mail-action-btn" style="flex: 1; justify-content: center; font-weight: 700;">
-                SEND EMAIL
-              </button>
-              <button type="button" class="modal-btn secondary-btn" id="copy-email-action-btn" style="justify-content: center;">
-                COPY EMAIL
-              </button>
-            </div>
-            <div id="contact-form-feedback" style="display: none; font-size: 11px; padding: 6px 10px; border-radius: 4px; margin-top: 4px;"></div>
-          </form>
-        </div>
-
-        <!-- RIGHT COLUMN: IMAGE OF DIGONTA & QUICK LINKS -->
-        <div class="modal-side-column" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-          <div style="width: 140px; height: 140px; border-radius: 16px; overflow: hidden; border: 2px solid #ffd166; box-shadow: 0 0 24px rgba(255, 209, 102, 0.3); margin-bottom: 12px; background: #0f172a;">
-            <img src="/portfolio.png" alt="Digonta Das" style="width: 100%; height: 100%; object-fit: cover;" />
-          </div>
-
-          <h3 style="margin: 0; color: #fff; font-size: 16px; font-weight: 800;">Digonta Das</h3>
-          <p style="margin: 4px 0 10px; color: #4deeea; font-size: 12px; font-weight: 600;">AI Engineer & Full-Stack Developer</p>
-          <p style="margin: 0 0 12px; color: #94a3b8; font-size: 11px; line-height: 1.4;">
-            BRAC University CSE Graduate. Specialist in Volumetric 3D CNNs, Deep Learning, and Distributed Cloud Systems.
-          </p>
-
-          <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
-            <a href="mailto:digontadas0171@gmail.com" class="modal-btn code-btn" style="justify-content: center; font-size: 11px;">
-              digontadas0171@gmail.com
-            </a>
-            <a href="https://github.com/DigontaDas" target="_blank" rel="noopener noreferrer" class="modal-btn secondary-btn" style="justify-content: center; font-size: 11px;">
-              GitHub: @DigontaDas
-            </a>
-            <a href="https://linkedin.com/in/digonta-das-b54130282" target="_blank" rel="noopener noreferrer" class="modal-btn secondary-btn" style="justify-content: center; font-size: 11px;">
-              LinkedIn: /in/digonta-das
-            </a>
+              <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <button type="button" class="modal-btn code-btn" id="send-mail-action-btn" style="flex: 1; justify-content: center; font-weight: 700;">
+                  SEND EMAIL
+                </button>
+                <button type="button" class="modal-btn secondary-btn" id="copy-email-action-btn" style="justify-content: center;">
+                  COPY EMAIL
+                </button>
+              </div>
+              <div id="contact-form-feedback" style="display: none; font-size: 11px; padding: 6px 10px; border-radius: 4px; margin-top: 4px;"></div>
+            </form>
           </div>
         </div>
+
+        <!-- RIGHT COLUMN: FULL-SIZE TRAINER CARD IMAGE MATCHING FORM HEIGHT -->
+        <div class="modal-side-column welcome-image-column" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <div class="welcome-image-container">
+            <img src="/portfolio.png" alt="Digonta Das - AI Engineer" class="welcome-profile-large-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- MATTE CREDENTIALS BAR ACROSS BOTTOM -->
+      <div class="welcome-credentials-row">
+        <a href="mailto:digontadas0171@gmail.com" class="matte-link-pill" title="Send Direct Email">
+          <span class="matte-label">EMAIL</span> digontadas0171@gmail.com
+        </a>
+        <a href="https://github.com/DigontaDas" target="_blank" rel="noopener noreferrer" class="matte-link-pill" title="GitHub Profile">
+          <span class="matte-label">GITHUB</span> @DigontaDas
+        </a>
+        <a href="https://linkedin.com/in/digonta-das-b54130282" target="_blank" rel="noopener noreferrer" class="matte-link-pill" title="LinkedIn Profile">
+          <span class="matte-label">LINKEDIN</span> Digonta Das
+        </a>
+        <a href="/Digonta_CV.pdf" download="Digonta_Das_CV.pdf" class="matte-link-pill" title="Download Official Resume PDF">
+          <span class="matte-label">RESUME</span> PDF Download
+        </a>
       </div>
     `;
 
     // Wire up events
     document.getElementById('welcome-explore-btn')?.addEventListener('click', () => {
+      AudioFX.playInspect();
+      AudioFX.startMusic();
       this.closeModal();
     });
 
@@ -560,9 +568,9 @@ export class ModalManager {
 
       if (feedback) {
         feedback.style.display = 'block';
-        feedback.style.background = 'rgba(16, 185, 129, 0.2)';
-        feedback.style.color = '#34d399';
-        feedback.style.border = '1px solid #059669';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.color = '#6ee7b7';
+        feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
         feedback.textContent = 'Opened email client! You can also email directly to digontadas0171@gmail.com';
       }
     });
@@ -571,9 +579,9 @@ export class ModalManager {
       navigator.clipboard.writeText('digontadas0171@gmail.com');
       if (feedback) {
         feedback.style.display = 'block';
-        feedback.style.background = 'rgba(255, 209, 102, 0.2)';
+        feedback.style.background = 'rgba(255, 209, 102, 0.15)';
         feedback.style.color = '#ffd166';
-        feedback.style.border = '1px solid #d97706';
+        feedback.style.border = '1px solid rgba(255, 209, 102, 0.3)';
         feedback.textContent = 'Copied digontadas0171@gmail.com to clipboard!';
       }
     });
