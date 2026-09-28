@@ -223,16 +223,16 @@ export default class HouseScene extends Phaser.Scene {
     this.tavernNpcs = [];
 
     // Uniform character scaling: all characters scaled to 1.35
-    // 1. Kitchen Master Chef (standing at preparation table with clear space)
-    this.cook = this.physics.add.sprite(130, 200, 'npc_cook');
-    this.cook.setDepth(200);
-    this.cook.setScale(1.35);
+    // 1. Kitchen Master Chef (standing realistically in front of the restored stove)
+    this.cook = this.physics.add.sprite(150, 195, 'npc_cook');
+    this.cook.setDepth(195);
+    this.cook.setScale(1.0);
     this.cook.body.setSize(18, 14);
     this.cook.body.setOffset(23, 36);
     this.cook.body.setImmovable(true);
     this.cook.anims.play('npc-cook-idle');
 
-    this.add.text(130, 164, "ALGORITHM CHEF", {
+    this.add.text(150, 160, "ALGORITHM CHEF", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -243,7 +243,7 @@ export default class HouseScene extends Phaser.Scene {
       padding: { x: 6, y: 3 }
     }).setOrigin(0.5).setDepth(2000);
 
-    const cookZone = this.add.zone(130, 200, 52, 52);
+    const cookZone = this.add.zone(150, 195, 52, 52);
     this.physics.world.enable(cookZone);
     cookZone.body.setAllowGravity(false);
     cookZone.dialogue = {
