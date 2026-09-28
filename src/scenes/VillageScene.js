@@ -640,13 +640,13 @@ export default class VillageScene extends Phaser.Scene {
       this.swayingFlora.push(lav);
     });
 
-    // 6. Blooming Rose & Summer Flower Bushes
+    // 6. Blooming Summer Flower Bushes (100% organic, zero flat edges)
     const flowerBushes = [
-      { x: gardenX - 145, y: gardenY - 40, type: 'garden_bush_roses' },
-      { x: gardenX + 2, y: gardenY - 30, type: 'garden_bush_blooming' },
-      { x: gardenX - 60, y: gardenY + 80, type: 'garden_bush_roses' },
-      { x: gardenX - 20, y: gardenY + 80, type: 'garden_bush_blooming' },
-      { x: gardenX + 145, y: gardenY + 40, type: 'garden_bush_roses' }
+      { x: gardenX - 145, y: gardenY - 40, type: 'bush_small' },
+      { x: gardenX + 2, y: gardenY - 30, type: 'flower_patch_1' },
+      { x: gardenX - 60, y: gardenY + 80, type: 'bush_small' },
+      { x: gardenX - 20, y: gardenY + 80, type: 'flower_patch_2' },
+      { x: gardenX + 145, y: gardenY + 40, type: 'bush_small' }
     ];
     flowerBushes.forEach(fb => {
       const bush = this.add.image(fb.x, fb.y, fb.type).setDepth(fb.y).setScale(0.9);
@@ -687,7 +687,7 @@ export default class VillageScene extends Phaser.Scene {
     createButterfly(gardenX + 50, gardenY - 40, 0xffd166);
     createButterfly(gardenX + 80, gardenY + 30, 0xef476f);
 
-    // 8. Signboard with razor-sharp modern font and zero emojis
+    // 8. Signboard with razor-sharp modern font and depth 2000 (always in front)
     this.add.text(gardenX, gardenY - halfH - 24, "ROYAL BOTANICAL GARDENS\nRare Flora and Herbal Sanctuary", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '11px',
@@ -697,26 +697,26 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 9, y: 4 }
-    }).setOrigin(0.5).setDepth(20);
+    }).setOrigin(0.5).setDepth(2000);
 
-    // ===== 2. NATURAL MANOR AVENUE FLOWER BORDERS =====
+    // ===== 2. NATURAL MANOR AVENUE FLOWER BORDERS (100% Full Round Sprites, Zero Half-Cuts) =====
     const leftBorderPositions = [
-      { x: 570, y: 440 }, { x: 565, y: 470 }, { x: 570, y: 500 }, { x: 565, y: 530 }
+      { x: 570, y: 440 }, { x: 565, y: 475 }, { x: 570, y: 510 }, { x: 565, y: 545 }
     ];
     leftBorderPositions.forEach((pos, i) => {
-      const fl = this.add.image(pos.x, pos.y, i % 2 === 0 ? 'garden_bush_blooming' : 'purple_flower');
+      const fl = this.add.image(pos.x, pos.y, i % 2 === 0 ? 'bush_small' : 'purple_flower');
       fl.setDepth(pos.y);
-      fl.setScale(0.85);
+      fl.setScale(0.8);
       this.swayingFlora.push(fl);
     });
 
     const rightBorderPositions = [
-      { x: 710, y: 440 }, { x: 715, y: 470 }, { x: 710, y: 500 }, { x: 715, y: 530 }
+      { x: 710, y: 440 }, { x: 715, y: 475 }, { x: 710, y: 510 }, { x: 715, y: 545 }
     ];
     rightBorderPositions.forEach((pos, i) => {
-      const fl = this.add.image(pos.x, pos.y, i % 2 === 0 ? 'garden_bush_roses' : 'flower_patch_1');
+      const fl = this.add.image(pos.x, pos.y, i % 2 === 0 ? 'bush_small' : 'flower_patch_1');
       fl.setDepth(pos.y);
-      fl.setScale(0.85);
+      fl.setScale(0.8);
       this.swayingFlora.push(fl);
     });
   }
@@ -729,7 +729,7 @@ export default class VillageScene extends Phaser.Scene {
     const manorY = 270;
 
     this.manor = this.add.image(manorX, manorY, 'house_manor_emerald');
-    this.manor.setDepth(manorY + 70); // 340 (allows player at y >= 370 in front of doorway to render in front)
+    this.manor.setDepth(manorY + 50); // 320: player in front of door (y >= 390) always renders in front
 
     const addBuildingWall = (x, y, bw, bh) => {
       const b = this.obstacles.create(x, y, 'blank_collider');
@@ -746,23 +746,23 @@ export default class VillageScene extends Phaser.Scene {
     addBuildingWall(manorX - 75, manorY + 65, 95, 70);
     // Right ground facade wall:
     addBuildingWall(manorX + 75, manorY + 65, 95, 70);
-    // Solid door backstop wall (stops player from walking into or behind the closed wooden door above y=380):
-    addBuildingWall(manorX, manorY + 80, 56, 30);
+    // Solid closed door barrier (stops player feet at y=395 so player never enters or clips under door):
+    addBuildingWall(manorX, manorY + 105, 70, 40);
 
-    // Arched Entrance Doorway sensor zone centered right at the door (640, 395)
-    this.manorDoor = this.add.zone(manorX, 395, 64, 40);
+    // Arched Entrance Doorway sensor zone centered right at the door mat (640, 400)
+    this.manorDoor = this.add.zone(manorX, 400, 64, 40);
     this.physics.world.enable(this.manorDoor);
     this.manorDoor.body.setAllowGravity(false);
 
-    // Entrance Red Welcome Mat & Stone Steps centered at door (640, 390)
+    // Entrance Red Welcome Mat & Stone Steps centered at door (640, 395)
     const mat = this.add.graphics();
     mat.fillStyle(0x991b1b, 0.95);
-    mat.fillRoundedRect(manorX - 24, 382, 48, 22, 4);
+    mat.fillRoundedRect(manorX - 24, 386, 48, 22, 4);
     mat.lineStyle(1.5, 0xffd166, 0.9);
-    mat.strokeRoundedRect(manorX - 24, 382, 48, 22, 4);
+    mat.strokeRoundedRect(manorX - 24, 386, 48, 22, 4);
     mat.setDepth(2);
 
-    // Signboard with modern high-res font and zero emojis
+    // Signboard with modern high-res font and depth 2000 (always on top)
     this.add.text(manorX, manorY - 135, "DIGONTA'S MANOR\n10 Project Labs Inside", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '11px',
@@ -772,7 +772,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 8, y: 4 }
-    }).setOrigin(0.5).setDepth(20);
+    }).setOrigin(0.5).setDepth(2000);
 
     // -----------------------------------------------------------------
     // 2. THE CAVERN OF RELICS (Achievements & Certs)
@@ -789,7 +789,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 8, y: 4 }
-    }).setOrigin(0.5).setDepth(20);
+    }).setOrigin(0.5).setDepth(2000);
 
     // -----------------------------------------------------------------
     // 3. THE GITHUB FORGE (Blacksmith Shop)
@@ -803,11 +803,7 @@ export default class VillageScene extends Phaser.Scene {
     // Airtight solid collider covering entire GitHub house footprint, roof, chimney, and perimeter
     addBuildingWall(gitX, gitY - 15, 230, 240);
 
-    const anvil = this.obstacles.create(gitX - 45, gitY + 90, 'station_anvil_clean');
-    anvil.setDepth(gitY + 90);
-    anvil.body.setSize(28, 24);
-    anvil.refreshBody();
-
+    // Furnace station (the anvil is already beautifully drawn in the house_github sprite)
     const furnace = this.obstacles.create(gitX + 45, gitY + 90, 'station_furnace_clean');
     furnace.setDepth(gitY + 90);
     furnace.body.setSize(32, 40);
@@ -822,7 +818,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 8, y: 4 }
-    }).setOrigin(0.5).setDepth(20);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.gitTrigger = this.add.zone(gitX, gitY + 90, 100, 60);
     this.physics.world.enable(this.gitTrigger);
@@ -850,7 +846,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 8, y: 4 }
-    }).setOrigin(0.5).setDepth(20);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.linkTrigger = this.add.zone(linkX, linkY + 90, 90, 60);
     this.physics.world.enable(this.linkTrigger);
@@ -877,7 +873,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
   }
 
   setupGemstonePedestals() {
@@ -922,7 +918,7 @@ export default class VillageScene extends Phaser.Scene {
 
     this.dummy = this.physics.add.sprite(dummyX, dummyY, 'training_dummy');
     this.dummy.setDepth(dummyY);
-    this.dummy.setScale(1.0);
+    this.dummy.setScale(1.25);
     this.dummy.body.setSize(18, 14);
     this.dummy.body.setOffset(7, 32);
     this.dummy.body.setImmovable(true);
@@ -937,21 +933,21 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
   }
 
   setupNpcs() {
-    // Standardized uniform character scaling: all NPCs scale 1.0
+    // Standardized uniform character scaling: all characters scaled to 1.35
     // 1. Scholar NPC in the Town Square (west garden terrace alcove: 130px away from Village Well)
     this.scholar = this.physics.add.sprite(510, 675, 'npc_wizard');
-    this.scholar.setScale(1.0);
+    this.scholar.setScale(1.35);
     this.scholar.setDepth(675);
     this.scholar.body.setSize(18, 14);
     this.scholar.body.setOffset(7, 18);
     this.scholar.body.setImmovable(true);
     this.scholar.anims.play('npc-wizard-idle');
 
-    this.add.text(510, 638, "ELDER SCHOLAR\nBRAC University Mentor", {
+    this.add.text(510, 634, "ELDER SCHOLAR\nBRAC University Mentor", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -960,7 +956,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.scholarZone = this.add.zone(510, 675, 60, 60);
     this.physics.world.enable(this.scholarZone);
@@ -972,14 +968,14 @@ export default class VillageScene extends Phaser.Scene {
     const caveY = 220;
 
     this.villain = this.physics.add.sprite(caveX, caveY + 75, 'mob_orc_warrior');
-    this.villain.setScale(1.0);
+    this.villain.setScale(1.35);
     this.villain.setDepth(caveY + 75);
     this.villain.body.setSize(18, 14);
     this.villain.body.setOffset(7, 18);
     this.villain.body.setImmovable(true);
     this.villain.anims.play('mob-orc-idle');
 
-    this.add.text(caveX, caveY + 45, "MALAKOR\nCave Sentinel", {
+    this.add.text(caveX, caveY + 40, "MALAKOR\nCave Sentinel", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -988,7 +984,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.villainZone = this.add.zone(caveX, caveY + 75, 60, 60);
     this.physics.world.enable(this.villainZone);
@@ -1003,14 +999,14 @@ export default class VillageScene extends Phaser.Scene {
     alchemyTable.body.setSize(36, 32);
 
     this.witch = this.physics.add.sprite(witchX, witchY, 'npc_witch');
-    this.witch.setScale(1.0);
+    this.witch.setScale(1.35);
     this.witch.setDepth(witchY);
     this.witch.body.setSize(18, 14);
     this.witch.body.setOffset(7, 18);
     this.witch.body.setImmovable(true);
     this.witch.anims.play('npc-witch-idle');
 
-    this.add.text(witchX, witchY - 30, "WITCH MORGANA\nDownload Resume (PDF)", {
+    this.add.text(witchX, witchY - 32, "WITCH MORGANA\nDownload Resume (PDF)", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -1019,7 +1015,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.witchZone = this.add.zone(witchX, witchY, 60, 60);
     this.physics.world.enable(this.witchZone);
@@ -1031,13 +1027,13 @@ export default class VillageScene extends Phaser.Scene {
     const knightY = 1060;
     this.gateKnight = this.physics.add.sprite(knightX, knightY, 'npc_knight');
     this.gateKnight.setDepth(knightY);
-    this.gateKnight.setScale(1.0);
+    this.gateKnight.setScale(1.35);
     this.gateKnight.body.setSize(18, 14);
     this.gateKnight.body.setOffset(7, 18);
     this.gateKnight.body.setImmovable(true);
     this.gateKnight.anims.play('npc-knight-idle');
 
-    this.add.text(knightX, knightY - 26, "SIR VALEN\nGate Knight", {
+    this.add.text(knightX, knightY - 28, "SIR VALEN\nGate Knight", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -1046,7 +1042,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.knightZone = this.add.zone(knightX, knightY, 60, 60);
     this.physics.world.enable(this.knightZone);
@@ -1056,13 +1052,13 @@ export default class VillageScene extends Phaser.Scene {
     // 5. Rogue Scout near East path
     this.rogue = this.physics.add.sprite(880, 350, 'npc_rogue');
     this.rogue.setDepth(350);
-    this.rogue.setScale(1.0);
+    this.rogue.setScale(1.35);
     this.rogue.body.setSize(18, 14);
     this.rogue.body.setOffset(7, 18);
     this.rogue.body.setImmovable(true);
     this.rogue.anims.play('npc-rogue-idle');
 
-    this.add.text(880, 320, "SCOUT SHADOW\nEast Glade Watcher", {
+    this.add.text(880, 316, "SCOUT SHADOW\nEast Glade Watcher", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -1071,7 +1067,7 @@ export default class VillageScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.92)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.rogueZone = this.add.zone(880, 350, 60, 60);
     this.physics.world.enable(this.rogueZone);
@@ -1081,13 +1077,13 @@ export default class VillageScene extends Phaser.Scene {
 
   createPlayer() {
     // Knight ground shadow
-    this.playerShadow = this.add.ellipse(this.spawnCoords.x, this.spawnCoords.y + 16, 20, 9, 0x000000, 0.35);
+    this.playerShadow = this.add.ellipse(this.spawnCoords.x, this.spawnCoords.y + 18, 26, 11, 0x000000, 0.35);
     this.playerShadow.setDepth(9);
 
-    // Uniform character scaling: player is scale 1.0 (matching all NPCs)
+    // Uniform character scaling: player is scale 1.35 (matching all NPCs)
     this.player = this.physics.add.sprite(this.spawnCoords.x, this.spawnCoords.y, 'player_idle_down');
     this.player.setDepth(this.spawnCoords.y);
-    this.player.setScale(1.0);
+    this.player.setScale(1.35);
 
     // Precise foot hitbox
     this.player.body.setSize(18, 12);
@@ -1165,7 +1161,7 @@ export default class VillageScene extends Phaser.Scene {
 
   createInteractionPrompt() {
     this.promptContainer = this.add.container(0, 0);
-    this.promptContainer.setDepth(100);
+    this.promptContainer.setDepth(3000);
     this.promptContainer.setVisible(false);
 
     this.promptBg = this.add.graphics();
@@ -1288,7 +1284,7 @@ export default class VillageScene extends Phaser.Scene {
       resolution: 3,
       stroke: '#000000',
       strokeThickness: 3
-    }).setOrigin(0.5).setDepth(50);
+    }).setOrigin(0.5).setDepth(3500);
 
     this.tweens.add({
       targets: dmg,

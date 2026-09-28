@@ -124,66 +124,63 @@ export default class HouseScene extends Phaser.Scene {
     addWall(520, 565, 80, 40);
 
     // 3. Interior Stone Partition Walls
-    // Thick stone dividing wall between West Wing and Grand Hall (x=370 to 430, y=60 to 440)
-    // Completely seals the vertical black void corridor where player could walk inside walls
-    addWall(400, 250, 60, 380);
+    // Thick stone dividing wall between West Wing and Grand Hall (x=370 to 430, y=60 to 290)
+    addWall(400, 175, 60, 230);
 
-    // Horizontal partition dividing Kitchen from lower medical lab (y=290, leaves opening at x=310..370)
-    addWall(185, 290, 240, 36);
-    // Cellar stairs blocker on west wall
-    addWall(75, 270, 40, 60);
-    // Thick vertical divider in lower west room (x=275, y=290 to 560)
-    addWall(275, 425, 30, 270);
+    // Complete airtight solid wall covering horizontal stone divider between Kitchen and lower cellar:
+    // (x: 90 to 450, y: 285 to 355) - completely prevents walking inside the wall void
+    addWall(270, 320, 360, 70);
+
+    // Vertical black void channel dividing cellar from hallway:
+    // (x: 285 to 355, y: 320 to 600) - completely prevents walking inside vertical wall void
+    addWall(320, 460, 70, 280);
 
     // 4. Furniture, Counters & Tables (Solid colliders so player cannot walk inside them)
     // Kitchen Prep Island Table
-    addWall(210, 210, 80, 30);
+    addWall(275, 240, 160, 36);
     // Bar Counter
     addWall(540, 330, 130, 28);
     addWall(610, 300, 24, 60);
 
-    // West Lab Tables & Stations (Clean non-overlapping colliders)
-    addWall(220, 230, 70, 28); // 3D Tiled CNN
-    addWall(320, 230, 70, 28); // OT Safety Gate
-    addWall(180, 360, 60, 28); // SE-Mobile UNet
-    addWall(130, 440, 60, 28); // Brain Tumor Seg
-    addWall(230, 470, 60, 28); // Skin Disease AI
-    addWall(195, 525, 90, 40); // Recreation Pool Table
+    // West Lab Tables & Stations
+    addWall(200, 440, 80, 32); // Cellar counter (SE-Mobile UNet)
+    addWall(140, 550, 70, 32); // Lower prep table (Brain Tumor Seg)
+    addWall(365, 520, 50, 32); // Study area (Skin Disease AI)
 
     // Grand Hall Dining & Studio Tables
-    addWall(780, 280, 74, 28); // MaSheba AI
-    addWall(780, 395, 74, 28); // REMEDY Platform
-    addWall(780, 505, 74, 28); // Clarity Platform
-    addWall(940, 350, 45, 40); // Movie Rec AI RAG
-    addWall(940, 470, 45, 40); // Dhaka Tesla Pool
-    addWall(985, 440, 32, 230); // Long Banquet Table
+    addWall(755, 365, 74, 30); // MaSheba AI
+    addWall(755, 475, 74, 30); // REMEDY Platform
+    addWall(755, 580, 74, 30); // Clarity Platform
+    addWall(960, 410, 45, 40); // Movie Rec AI RAG
+    addWall(960, 530, 45, 40); // Dhaka Tesla Pool
+    addWall(985, 470, 32, 230); // Long Banquet Table
   }
 
   setupProjectStations() {
     this.stations = [];
 
-    // Well-spaced, distinct table positions with zero text collisions
+    // Well-spaced, distinct table positions with zero wall collisions
     const tablePositions = {
       // WEST LAB: Medical AI & Computer Vision
-      "project-1": { x: 220, y: 230, color: 0x4deeea, title: "3D Tiled CNN (Thesis)", wing: "Medical AI Lab" },
-      "project-5": { x: 320, y: 230, color: 0x4deeea, title: "OT Safety Gate", wing: "Medical AI Lab" },
-      "project-8": { x: 180, y: 360, color: 0x4deeea, title: "SE-Mobile UNet", wing: "Medical AI Lab" },
-      "project-9": { x: 130, y: 440, color: 0x4deeea, title: "Brain Tumor Seg", wing: "Medical AI Lab" },
-      "project-6": { x: 230, y: 470, color: 0x4deeea, title: "Skin Disease AI", wing: "Medical AI Lab" },
+      "project-1": { x: 230, y: 240, color: 0x4deeea, title: "3D Tiled CNN (Thesis)", wing: "Medical AI Lab" },
+      "project-5": { x: 320, y: 240, color: 0x4deeea, title: "OT Safety Gate", wing: "Medical AI Lab" },
+      "project-8": { x: 200, y: 440, color: 0x4deeea, title: "SE-Mobile UNet", wing: "Medical AI Lab" },
+      "project-9": { x: 140, y: 550, color: 0x4deeea, title: "Brain Tumor Seg", wing: "Medical AI Lab" },
+      "project-6": { x: 365, y: 520, color: 0x4deeea, title: "Skin Disease AI", wing: "Medical AI Lab" },
 
       // EAST GRAND HALL: AI Systems & Full-Stack Studio
-      "project-3": { x: 780, y: 280, color: 0x74ee15, title: "MaSheba AI", wing: "Systems Studio" },
-      "project-10": { x: 780, y: 395, color: 0x74ee15, title: "REMEDY Platform", wing: "Systems Studio" },
-      "project-4": { x: 780, y: 505, color: 0x74ee15, title: "Clarity Platform", wing: "Systems Studio" },
-      "project-7": { x: 940, y: 350, color: 0x74ee15, title: "Movie Rec AI RAG", wing: "Systems Studio" },
-      "project-2": { x: 940, y: 470, color: 0x74ee15, title: "Dhaka Tesla Pool", wing: "Systems Studio" }
+      "project-3": { x: 755, y: 365, color: 0x74ee15, title: "MaSheba AI", wing: "Systems Studio" },
+      "project-10": { x: 755, y: 475, color: 0x74ee15, title: "REMEDY Platform", wing: "Systems Studio" },
+      "project-4": { x: 755, y: 580, color: 0x74ee15, title: "Clarity Platform", wing: "Systems Studio" },
+      "project-7": { x: 960, y: 410, color: 0x74ee15, title: "Movie Rec AI RAG", wing: "Systems Studio" },
+      "project-2": { x: 960, y: 530, color: 0x74ee15, title: "Dhaka Tesla Pool", wing: "Systems Studio" }
     };
 
     PROJECTS_MATRIX.forEach((project) => {
       const pos = tablePositions[project.id];
       if (!pos) return;
 
-      // Table station floating badge with high-res font and compact padding
+      // Table station floating badge with high-res font and depth 2000 (always in front of screen)
       this.add.text(pos.x, pos.y - 20, pos.title, {
         fontFamily: "'Plus Jakarta Sans', sans-serif",
         fontSize: '9px',
@@ -193,7 +190,7 @@ export default class HouseScene extends Phaser.Scene {
         align: 'center',
         backgroundColor: 'rgba(15, 23, 42, 0.88)',
         padding: { x: 5, y: 2 }
-      }).setOrigin(0.5).setDepth(15);
+      }).setOrigin(0.5).setDepth(2000);
 
       // Glowing magical holographic orb on table
       const orb = this.add.graphics();
@@ -225,17 +222,17 @@ export default class HouseScene extends Phaser.Scene {
   setupTavernNpcs() {
     this.tavernNpcs = [];
 
-    // Uniform character scaling: all characters scaled to 1.0
+    // Uniform character scaling: all characters scaled to 1.35
     // 1. Kitchen Master Chef (standing at preparation table with clear space)
     this.cook = this.physics.add.sprite(130, 200, 'npc_cook');
     this.cook.setDepth(200);
-    this.cook.setScale(1.0);
+    this.cook.setScale(1.35);
     this.cook.body.setSize(18, 14);
     this.cook.body.setOffset(23, 36);
     this.cook.body.setImmovable(true);
     this.cook.anims.play('npc-cook-idle');
 
-    this.add.text(130, 168, "ALGORITHM CHEF", {
+    this.add.text(130, 164, "ALGORITHM CHEF", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -244,7 +241,7 @@ export default class HouseScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.9)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     const cookZone = this.add.zone(130, 200, 52, 52);
     this.physics.world.enable(cookZone);
@@ -262,13 +259,13 @@ export default class HouseScene extends Phaser.Scene {
     // 2. Bar Counter Bartender
     this.barkeep = this.physics.add.sprite(580, 290, 'npc_barkeep');
     this.barkeep.setDepth(9);
-    this.barkeep.setScale(1.0);
+    this.barkeep.setScale(1.35);
     this.barkeep.body.setSize(18, 14);
     this.barkeep.body.setOffset(23, 36);
     this.barkeep.body.setImmovable(true);
     this.barkeep.anims.play('npc-barkeep-idle');
 
-    this.add.text(580, 260, "MASTER INNKEEPER", {
+    this.add.text(580, 254, "MASTER INNKEEPER", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -277,7 +274,7 @@ export default class HouseScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.9)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     const barZone = this.add.zone(580, 290, 56, 56);
     this.physics.world.enable(barZone);
@@ -295,13 +292,13 @@ export default class HouseScene extends Phaser.Scene {
     // 3. Visiting Researcher Guest in the Grand Hall
     this.guest = this.physics.add.sprite(610, 480, 'npc_guest');
     this.guest.setDepth(9);
-    this.guest.setScale(1.0);
+    this.guest.setScale(1.35);
     this.guest.body.setSize(18, 14);
     this.guest.body.setOffset(23, 36);
     this.guest.body.setImmovable(true);
     this.guest.anims.play('npc-guest-idle');
 
-    this.add.text(610, 450, "VISITING RESEARCHER", {
+    this.add.text(610, 444, "VISITING RESEARCHER", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -310,7 +307,7 @@ export default class HouseScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.9)',
       padding: { x: 6, y: 3 }
-    }).setOrigin(0.5).setDepth(15);
+    }).setOrigin(0.5).setDepth(2000);
 
     const guestZone = this.add.zone(610, 480, 56, 56);
     this.physics.world.enable(guestZone);
@@ -348,7 +345,7 @@ export default class HouseScene extends Phaser.Scene {
       align: 'center',
       backgroundColor: 'rgba(15, 23, 42, 0.9)',
       padding: { x: 6, y: 2 }
-    }).setOrigin(0.5).setDepth(20);
+    }).setOrigin(0.5).setDepth(2000);
 
     this.exitSensor = this.add.zone(exitX, exitY, 50, 30);
     this.physics.world.enable(this.exitSensor);
@@ -357,17 +354,17 @@ export default class HouseScene extends Phaser.Scene {
 
   createPlayer() {
     // Shadow
-    this.playerShadow = this.add.ellipse(this.spawnCoords.x, this.spawnCoords.y + 16, 20, 9, 0x000000, 0.35);
+    this.playerShadow = this.add.ellipse(this.spawnCoords.x, this.spawnCoords.y + 18, 26, 11, 0x000000, 0.35);
     this.playerShadow.setDepth(9);
 
-    // Uniform character scaling: player is scale 1.0 (matching all NPCs)
+    // Uniform character scaling: player is scale 1.35 (matching all NPCs)
     this.player = this.physics.add.sprite(this.spawnCoords.x, this.spawnCoords.y, 'player_idle_up');
     this.player.setDepth(10);
-    this.player.setScale(1.0);
+    this.player.setScale(1.35);
 
-    // Tight 16x10 foot hitbox
-    this.player.body.setSize(16, 10);
-    this.player.body.setOffset(24, 48);
+    // Precise foot hitbox
+    this.player.body.setSize(18, 12);
+    this.player.body.setOffset(23, 46);
     this.player.setCollideWorldBounds(true);
 
     // Collide with walls AND all NPCs so player CANNOT walk through anyone
@@ -411,7 +408,7 @@ export default class HouseScene extends Phaser.Scene {
 
   createInteractionPrompt() {
     this.promptContainer = this.add.container(0, 0);
-    this.promptContainer.setDepth(100);
+    this.promptContainer.setDepth(3000);
     this.promptContainer.setVisible(false);
 
     this.promptBg = this.add.graphics();
