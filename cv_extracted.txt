@@ -1,0 +1,70 @@
+--- PAGE 1 ---
+Digonta Das 
+AI Engineer | Computer Vision Engineer | Web Developer 
++8801790029046 | digontadas0171@gmail.com | Dhaka, Bangladesh | linkedin.com/in/digonta-das | digonta-das.vercel.app | github.com/DigontaDas 
+TECHNICAL SKILLS 
+ML & Deep Learning: PyTorch, TensorFlow, CNN, 3D CNN, ResNet, U-Net, MobileNetV2, Transfer Learning, XGBoost, LoRA, QLoRA, ONNX 
+Computer Vision: Segmentation, Object Detection, Volumetric Analysis, HU Normalization, Data Augmentation 
+NLP & LLMs: Hugging Face, Sentence Transformers, Prompt Engineering, RAG, LangChain, LLM APIs (OpenAI, Gemini, Groq, Whisper) 
+Backend & Infra: FastAPI, Node.js, Express.js, Docker, GitHub Actions, Vercel, Render, Hugging Face Spaces 
+Databases & Vector Stores: PostgreSQL, Supabase, ChromaDB, pgvector, MongoDB, SQLite 
+Frontend & Mobile: React, React Native (Expo), Next.js, Tailwind CSS   |   Languages: Python, JavaScript, C, Kotlin 
+PROFESSIONAL EXPERIENCE 
+AI Developer InternMarch 2026 – June 2026 
+IntelliVerseRemote 
+●​
+Cut transcription pipeline response time by 40% by redesigning request batching for a Whisper API speech-to-text system; built a FastAPI 
+inference backend reducing API failure rate to under 2% and shipped 3 LLM integrations into client products within the first month. 
+RESEARCH 
+Efficient 3D Tiled CNN for Coronary Artery Stenosis DetectionOngoing 
+Undergraduate Thesis (Team Lead) | BRAC University 
+●​
+End-to-end 3D CNN segmentation pipeline on 121 MRI + 160 CT scans (3.5 GB/scan) self-collected from Ibrahim Cardiac & Bangladesh 
+Medical hospitals, benchmarked against ImageCAS. 
+●​
+Designed volumetric tiling for memory-efficient CT processing; engineered HU clipping/normalization and Hybrid Combo Loss (Dice + BCE) to 
+resolve empty-mask collapse; outputs structured cardiac risk scores for clinicians. 
+Efficient SE-Mobile UNet for Cross-Vendor Cardiac MRI Segmentation 
+github.com/DigontaDas/Hybrid-Model-on-Efficient-SE-Net 
+●​
+Hybrid MobileNetV2 + SE-attention CNN at 2.2M parameters; zero-shot cross-vendor eval: DSC 0.8712 on ACDC, DSC 0.7512 on unseen 
+M&Ms dataset (generalization gap: 0.12). 
+KEY PROJECTS 
+MaSheba AI – Offline Maternal Health Platform 
+React Native, FastAPI, ONNX, XGBoost, Supabase | GitHub | Docs 
+●​
+Team Lead of 5-person team; Infinity AI BuildFest 2026 Finalist — offline-first app targeting 3M+ expecting mothers and 60K+ CHWs in rural 
+Bangladesh; XGBoost risk model exported to ONNX (1 MB) achieving <200ms on-device inference on Android 8 with zero internet 
+dependency. 
+●​
+Outbox-first SQLite sync stress-tested at 50 concurrent events at 100% deduplication; cascading Bangla AI chat (Groq → Gemini → offline) 
+with 6-stage safety filter; Next.js admin dashboard backed by Supabase + pgvector. 
+Clarity – B2B Supply Chain Finance Platform 
+PostgreSQL, Express.js, React, Node.js, Backend Routing, API Integration, ERP Systems, Financial Algorithms | GitHub 
+●​
+Engineered a B2B supply chain finance platform with an invoice marketplace, implementing Express.js backend routes with locking 
+mechanisms to guarantee secure, non-duplicated transaction processing. 
+●​
+Built a real-time discount rate calculator and integrated ERP system data structures to streamline financial operations for enterprise clients; 
+architected a secure KYB (Know Your Business) verification vault for business authentication and compliance data. 
+●​
+Implemented invoice confirmation and digital acknowledgment workflows across frontend and backend APIs; managed backend 
+infrastructure on Supabase powering real-time dashboards with seamless data synchronization. 
+Movie Recommendation AI – RAG Pipeline 
+ChromaDB, Sentence Transformers, LLaMA, FastAPI, React | GitHub 
+●​
+Full RAG pipeline over 3,000+ movies using Sentence Transformers + ChromaDB; LLM re-ranking via Ollama (LLaMA) with modular FastAPI 
+backend and React/Vite frontend, fully local at zero API cost. 
+EDUCATION 
+BRAC UniversityDhaka, Bangladesh 
+B.Sc. in Computer Science and Engineering | GPA: 3.6 / 4.0Expected Jan 2027 
+●​
+Coursework: Artificial Intelligence, Computer Vision, Image Processing, Computer Graphics, Linear Algebra, Operating Systems, Computer 
+Architecture 
+AWARDS & RECOGNITION 
+●​
+Edupro Global Green Talent Awards 2026 – Round 1 Qualifier & Round 2 Participant  May–Jun 2026 
+Team Jagotic Moho | In association with the University of Leeds, UK – demonstrating creativity, innovation, and commitment to sustainability. 
+●​
+Infinity AI BuildFest 2026 – Finalist, Team DareDevil | Offline-first maternal health AI platform (MaSheba) for rural Bangladesh  2026 
+
