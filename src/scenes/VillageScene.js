@@ -117,7 +117,7 @@ export default class VillageScene extends Phaser.Scene {
     plaza.setDepth(1);
 
     // Path West to Cavern
-    const pathCave = this.add.tileSprite(370, 300, 320, 56, 'tile_dirt_solid');
+    const pathCave = this.add.tileSprite(370, 355, 320, 56, 'tile_dirt_solid');
     pathCave.setDepth(1);
 
     // Path East to GitHub Forge
@@ -429,22 +429,45 @@ export default class VillageScene extends Phaser.Scene {
     const caveX = 240;
     const caveY = 220;
 
-    // 1. GRAND 16-BIT MOUNTAIN CLIFF BACKDROP BEHIND CAVE
-    const mountainBackdrop = this.add.image(caveX + 10, caveY - 60, 'mountain_cliff_backdrop');
-    mountainBackdrop.setDepth(3);
-    mountainBackdrop.setScale(0.5);
+    // 1. Lush Forest Woodland Canopy behind the Cavern of Relics
+    // Replaces the old mountain cliff backdrop with natural, rich woodland trees
+    const backdropTrees = [
+      // Deep canopy row (y: 35 - 65)
+      { x: 40, y: 50, key: 'tree_spruce', scale: 1.05, depth: 3 },
+      { x: 95, y: 40, key: 'tree_pine_tall', scale: 1.1, depth: 3 },
+      { x: 150, y: 55, key: 'tree_oak', scale: 1.15, depth: 3 },
+      { x: 205, y: 45, key: 'tree_pine_tall', scale: 1.1, depth: 3 },
+      { x: 260, y: 40, key: 'tree_spruce', scale: 1.15, depth: 3 },
+      { x: 315, y: 50, key: 'tree_pine_tall', scale: 1.1, depth: 3 },
+      { x: 370, y: 45, key: 'tree_oak', scale: 1.15, depth: 3 },
+      { x: 430, y: 55, key: 'tree_spruce', scale: 1.1, depth: 3 },
+      { x: 485, y: 45, key: 'tree_pine', scale: 1.05, depth: 3 },
 
-    // Pines along high cliff rim
-    const cliffPines = [
-      { x: caveX - 180, y: caveY - 140 },
-      { x: caveX - 80, y: caveY - 155 },
-      { x: caveX + 60, y: caveY - 150 },
-      { x: caveX + 160, y: caveY - 135 }
+      // Mid canopy row behind cave upper rim (y: 80 - 110)
+      { x: 60, y: 95, key: 'tree_oak', scale: 1.05, depth: 4 },
+      { x: 115, y: 90, key: 'tree_pine', scale: 1.1, depth: 4 },
+      { x: 175, y: 80, key: 'tree_spruce', scale: 1.05, depth: 4 },
+      { x: 240, y: 75, key: 'tree_pine_tall', scale: 1.1, depth: 4 },
+      { x: 305, y: 80, key: 'tree_spruce', scale: 1.05, depth: 4 },
+      { x: 365, y: 90, key: 'tree_pine', scale: 1.1, depth: 4 },
+      { x: 420, y: 95, key: 'tree_oak', scale: 1.05, depth: 4 },
+      { x: 475, y: 100, key: 'tree_pine_tall', scale: 1.0, depth: 4 },
+
+      // Lower canopy rim framing the cave shoulders (y: 130 - 165)
+      { x: 50, y: 145, key: 'tree_pine_tall', scale: 1.0, depth: 5 },
+      { x: 105, y: 140, key: 'tree_spruce', scale: 0.95, depth: 5 },
+      { x: 375, y: 140, key: 'tree_spruce', scale: 0.95, depth: 5 },
+      { x: 435, y: 145, key: 'tree_pine_tall', scale: 1.0, depth: 5 },
+
+      // Flanking grove sides (y: 200 - 240)
+      { x: 60, y: 220, key: 'tree_oak', scale: 1.0, depth: 5 },
+      { x: 440, y: 220, key: 'tree_pine', scale: 1.0, depth: 5 }
     ];
-    cliffPines.forEach(pos => {
-      const p = this.add.image(pos.x, pos.y, 'tree_pine_tall');
-      p.setDepth(4);
-      p.setScale(0.8);
+
+    backdropTrees.forEach(t => {
+      const tree = this.add.image(t.x, t.y, t.key);
+      tree.setDepth(t.depth);
+      tree.setScale(t.scale);
     });
 
     // 2. High-Fidelity 3D Terraced Mountain with Arched Cavern Entrance
@@ -476,7 +499,8 @@ export default class VillageScene extends Phaser.Scene {
       boulder.refreshBody();
     });
 
-    // 5. AIRTIGHT MOUNTAIN & CAVE COLLIDERS (Completely prevents player walking on top of cave or climbing mountain)
+    // 5. AIRTIGHT MOUNTAIN & CAVE COLLIDERS
+    // Completely prohibits and prevents player from walking on top of cave, climbing the ramp, or entering inside
     const addMountainWall = (x, y, bw, bh) => {
       const b = this.obstacles.create(x, y, 'blank_collider');
       b.setVisible(false);
@@ -485,14 +509,18 @@ export default class VillageScene extends Phaser.Scene {
       return b;
     };
 
-    // Upper mountain cliff ridge: seals entire northern zone from x:0 to x:520, y:0 to y:260
-    addMountainWall(260, 130, 520, 260);
-    // Left mountain cliff wing: blocks x:0 to x:225, y:220 to y:340
-    addMountainWall(112, 280, 225, 120);
-    // Right mountain cliff wing: blocks x:255 to x:540, y:220 to y:340
-    addMountainWall(397, 280, 285, 120);
-    // Arched cave ceiling dome (blocks top of cave while keeping entrance accessible at caveY + 75)
-    addMountainWall(caveX, caveY + 15, 120, 50);
+    // Upper mountain cliff & forest canopy: seals entire northern zone from x:0 to x:500, y:0 to y:280
+    addMountainWall(250, 140, 500, 280);
+
+    // Continuous cave front barrier: seals entire cave face, left ramp, arched entrance, and right cliff
+    // Spans x:0 to x:440, from y:275 to y:324
+    addMountainWall(220, 300, 440, 50);
+
+    // Cave entrance and bottom step seal: completely prevents stepping inside the tunnel arch or onto lower steps
+    addMountainWall(240, 316, 260, 24);
+
+    // Buffer to Digonta's Manor grounds: prevents slipping through gap between cave and manor
+    addMountainWall(470, 300, 80, 60);
   }
 
   buildGardens() {
@@ -877,12 +905,12 @@ export default class VillageScene extends Phaser.Scene {
     this.gemstones = [];
     const caveX = 240;
     const caveY = 220;
-    // Position gemstones with generous clearance below Malakor (who is at caveY + 75 = 295)
+    // Position gemstones in front of Malakor on open meadow grass
     const stoneConfigs = [
-      { id: "cert-infinity", key: "gem_diamond", x: caveX - 80, y: caveY + 130, label: "[E] Infinity AI Finalist" },
-      { id: "cert-edupro", key: "gem_emerald", x: caveX - 28, y: caveY + 140, label: "[E] EduPro Leeds Award" },
-      { id: "cert-datacamp", key: "gem_sapphire", x: caveX + 28, y: caveY + 140, label: "[E] DataCamp Scientist" },
-      { id: "cert-academic", key: "gem_amethyst", x: caveX + 80, y: caveY + 130, label: "[E] BRAC CSE & Master's" }
+      { id: "cert-infinity", key: "gem_diamond", x: caveX - 80, y: 365, label: "[E] Infinity AI Finalist" },
+      { id: "cert-edupro", key: "gem_emerald", x: caveX - 28, y: 375, label: "[E] EduPro Leeds Award" },
+      { id: "cert-datacamp", key: "gem_sapphire", x: caveX + 28, y: 375, label: "[E] DataCamp Scientist" },
+      { id: "cert-academic", key: "gem_amethyst", x: caveX + 80, y: 365, label: "[E] BRAC CSE & Master's" }
     ];
 
     stoneConfigs.forEach((cfg) => {
@@ -960,19 +988,19 @@ export default class VillageScene extends Phaser.Scene {
     this.scholarZone.body.setAllowGravity(false);
     this.scholarZone.customType = 'npc_scholar';
 
-    // 2. Cave Guardian Villain Malakor at Cave entrance
+    // 2. Cave Guardian Villain Malakor in front of Cave entrance
     const caveX = 240;
-    const caveY = 220;
+    const malakorY = 338;
 
-    this.villain = this.physics.add.sprite(caveX, caveY + 75, 'mob_orc_warrior');
+    this.villain = this.physics.add.sprite(caveX, malakorY, 'mob_orc_warrior');
     this.villain.setScale(1.35);
-    this.villain.setDepth(caveY + 75);
+    this.villain.setDepth(malakorY);
     this.villain.body.setSize(18, 14);
     this.villain.body.setOffset(7, 18);
     this.villain.body.setImmovable(true);
     this.villain.anims.play('mob-orc-idle');
 
-    this.add.text(caveX, caveY + 40, "MALAKOR\nCave Sentinel", {
+    this.add.text(caveX, malakorY - 32, "MALAKOR\nCave Sentinel", {
       fontFamily: "'Plus Jakarta Sans', sans-serif",
       fontSize: '10px',
       fontStyle: 'bold',
@@ -983,7 +1011,7 @@ export default class VillageScene extends Phaser.Scene {
       padding: { x: 6, y: 3 }
     }).setOrigin(0.5).setDepth(2000);
 
-    this.villainZone = this.add.zone(caveX, caveY + 75, 60, 60);
+    this.villainZone = this.add.zone(caveX, malakorY, 70, 60);
     this.physics.world.enable(this.villainZone);
     this.villainZone.body.setAllowGravity(false);
     this.villainZone.customType = 'villain';
