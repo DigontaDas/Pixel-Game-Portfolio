@@ -146,8 +146,7 @@ export default class VillageScene extends Phaser.Scene {
     const addBoundary = (x, y, bw, bh) => {
       const b = this.obstacles.create(x, y, 'blank_collider');
       b.setVisible(false);
-      b.body.setSize(bw, bh);
-      b.body.setOffset(8 - bw / 2, 8 - bh / 2);
+      b.setDisplaySize(bw, bh);
       b.refreshBody();
       return b;
     };
@@ -481,8 +480,7 @@ export default class VillageScene extends Phaser.Scene {
     const addMountainWall = (x, y, bw, bh) => {
       const b = this.obstacles.create(x, y, 'blank_collider');
       b.setVisible(false);
-      b.body.setSize(bw, bh);
-      b.body.setOffset(8 - bw / 2, 8 - bh / 2);
+      b.setDisplaySize(bw, bh);
       b.refreshBody();
       return b;
     };
@@ -734,8 +732,7 @@ export default class VillageScene extends Phaser.Scene {
     const addBuildingWall = (x, y, bw, bh) => {
       const b = this.obstacles.create(x, y, 'blank_collider');
       b.setVisible(false);
-      b.body.setSize(bw, bh);
-      b.body.setOffset(8 - bw / 2, 8 - bh / 2);
+      b.setDisplaySize(bw, bh);
       b.refreshBody();
       return b;
     };

@@ -95,8 +95,7 @@ export default class HouseScene extends Phaser.Scene {
     const addWall = (x, y, bw, bh) => {
       const b = this.walls.create(x, y, 'blank_collider');
       b.setVisible(false);
-      b.body.setSize(bw, bh);
-      b.body.setOffset(8 - bw / 2, 8 - bh / 2);
+      b.setDisplaySize(bw, bh);
       b.refreshBody();
       return b;
     };
@@ -108,10 +107,10 @@ export default class HouseScene extends Phaser.Scene {
     addWall(1080, 310, 80, 620);   // East outer border
 
     // 2. Room Perimeter Walls
-    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 155, x=45 to 380)
-    addWall(215, 75, 340, 155);
-    // North Wall Grand Hall (y=40 to 195, x=380 to 1040)
-    addWall(710, 115, 660, 160);
+    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 160, x=45 to 380)
+    addWall(215, 80, 340, 160);
+    // North Wall Grand Hall (y=40 to 180, x=380 to 1040)
+    addWall(710, 110, 660, 150);
     // West Wall (x=0 to 75, y=90 to 570)
     addWall(45, 330, 90, 480);
     // East Wall (x=1020 to 1100, y=175 to 570)
@@ -135,25 +134,33 @@ export default class HouseScene extends Phaser.Scene {
     // (x: 285 to 355, y: 320 to 600) - completely prevents walking inside vertical wall void
     addWall(320, 460, 70, 280);
 
-    // 4. Furniture, Counters & Tables (Solid colliders so player cannot walk inside them)
-    // Kitchen Prep Island Table
-    addWall(275, 240, 160, 36);
-    // Bar Counter
-    addWall(540, 330, 130, 28);
-    addWall(610, 300, 24, 60);
+    // 4. Furniture, Counters & Tables (100% Solid colliders covering table tops and chairs so player CANNOT walk on them)
+    // Kitchen Prep Island Table & food
+    addWall(275, 240, 170, 46);
+    // Bar Counter & Stools
+    addWall(540, 330, 130, 32);
+    addWall(610, 300, 26, 64);
+    // Bar Back Shelves with glasses & bottles
+    addWall(530, 220, 110, 40);
 
     // West Lab Tables & Stations
-    addWall(200, 440, 80, 32); // Cellar counter (SE-Mobile UNet)
-    addWall(140, 550, 70, 32); // Lower prep table (Brain Tumor Seg)
-    addWall(365, 520, 50, 32); // Study area (Skin Disease AI)
+    addWall(200, 440, 90, 42); // Cellar counter (SE-Mobile UNet)
+    addWall(140, 550, 80, 42); // Lower prep table (Brain Tumor Seg)
+    addWall(365, 520, 60, 42); // Study area (Skin Disease AI)
 
-    // Grand Hall Dining & Studio Tables
-    addWall(755, 365, 74, 30); // MaSheba AI
-    addWall(755, 475, 74, 30); // REMEDY Platform
-    addWall(755, 580, 74, 30); // Clarity Platform
-    addWall(960, 410, 45, 40); // Movie Rec AI RAG
-    addWall(960, 530, 45, 40); // Dhaka Tesla Pool
-    addWall(985, 470, 32, 230); // Long Banquet Table
+    // Grand Hall Dining & Studio Tables (Completely covers tables and chairs so player cannot climb on top)
+    addWall(755, 365, 110, 64); // MaSheba AI (Red cloth table + chairs)
+    addWall(755, 475, 110, 64); // REMEDY Platform (Wood table + chairs)
+    addWall(755, 580, 110, 64); // Clarity Platform (Blue cloth table + chairs)
+    addWall(965, 470, 60, 240);  // Long Banquet Table on far right
+    addWall(555, 565, 90, 50);   // Center bottom table (Red cloth with bottles)
+    addWall(885, 225, 70, 70);   // Elevated VIP round table & chairs
+
+    // Grand Hall Chandelier Columns / Torches
+    addWall(650, 420, 28, 28);
+    addWall(855, 420, 28, 28);
+    addWall(650, 550, 28, 28);
+    addWall(855, 550, 28, 28);
   }
 
   setupProjectStations() {
