@@ -37,4 +37,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const game = new Phaser.Game(config);
   window.game = game;
+
+  // Greet visitor with Welcome & Contact Portal on website entry
+  setTimeout(() => {
+    modalManager.renderWelcomeContactModal();
+  }, 350);
 });

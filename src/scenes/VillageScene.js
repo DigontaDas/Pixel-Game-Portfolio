@@ -46,6 +46,9 @@ export default class VillageScene extends Phaser.Scene {
     // Audio & Pause listener
     GameBridge.on(EVENTS.SET_INPUT_PAUSED, (paused) => {
       this.isInputPaused = paused;
+      if (this.input && this.input.keyboard) {
+        this.input.keyboard.resetKeys();
+      }
       if (this.player && this.player.body) {
         this.player.body.setVelocity(0, 0);
         if (!this.isAttacking) {
@@ -1181,6 +1184,23 @@ export default class VillageScene extends Phaser.Scene {
       if (pointer.leftButtonDown() && !this.isInputPaused) {
         this.triggerAttack();
       }
+    });
+
+    // Reset stuck keys on window blur or tab switch
+    const resetAllKeys = () => {
+      if (this.input && this.input.keyboard) {
+        this.input.keyboard.resetKeys();
+      }
+      if (this.player && this.player.body) {
+        this.player.body.setVelocity(0, 0);
+        if (!this.isAttacking) {
+          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
+        }
+      }
+    };
+    window.addEventListener('blur', resetAllKeys);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) resetAllKeys();
     });
   }
 

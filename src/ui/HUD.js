@@ -56,6 +56,9 @@ export class HUD {
           <a href="${PERSONAL_INFO.socials.cvFile}" download="Digonta_Das_CV.pdf" class="hud-btn cv-btn" title="Download Official PDF Resume">
             RESUME PDF
           </a>
+          <button class="hud-btn contact-btn" id="open-welcome-modal-btn" title="Contact Digonta or view portfolio menu" style="background: rgba(255, 209, 102, 0.15); border-color: #ffd166; color: #ffd166; font-weight: 700;">
+            CONTACT ME
+          </button>
           <button class="hud-btn audio-btn" id="audio-toggle-btn" title="Toggle Sound">
             <span class="btn-icon" id="audio-icon">SOUND ON</span>
           </button>
@@ -101,23 +104,45 @@ export class HUD {
         </div>
       </div>
 
-      <!-- FLOATING CONTROLS HELPER -->
-      <aside class="hud-controls-hint">
-        <span class="key-pill">WASD / ARROWS</span> Move &bull; <span class="key-pill">SHIFT</span> Sprint &bull; <span class="key-pill">SPACE / K</span> Jump &bull; <span class="key-pill">J / F / CLICK</span> Attack &bull; <span class="key-pill">E</span> Interact
-      </aside>
-
-      <!-- BOTTOM INTERACTIVE SKILLS FOOTER -->
-      <footer class="hud-bottom-footer" id="skills-footer">
-        <div class="footer-header">
-          <div class="footer-title-group">
-            <span class="footer-title">TECHNICAL ARSENAL & SKILLS (REACTS TO PROJECT STATIONS)</span>
-          </div>
-          <span class="footer-tip">Stand near a project table inside the Manor to highlight skills</span>
+      <!-- LEFT SIDE: REACTIVE TECHNICAL ARSENAL & SKILLS -->
+      <aside class="hud-left-skills" id="skills-panel">
+        <div class="skills-sidebar-header">
+          <span class="skills-sidebar-title">TECHNICAL ARSENAL</span>
+          <span class="skills-sidebar-sub">Reacts to Project Labs</span>
         </div>
-        <div class="skills-hotbar-scroll" id="skills-hotbar">
+        <div class="skills-vertical-list" id="skills-hotbar">
           <!-- Dynamically populated skills -->
         </div>
-      </footer>
+      </aside>
+
+      <!-- RIGHT SIDE: PROMINENT ENLARGED CONTROLS CARD -->
+      <aside class="hud-controls-card" id="hud-controls-card">
+        <div class="controls-card-header">
+          <span class="controls-card-title">CONTROLS</span>
+        </div>
+        <div class="controls-card-body">
+          <div class="control-card-row">
+            <span class="key-pill-large">WASD / ARROWS</span>
+            <span class="control-desc">Move Knight</span>
+          </div>
+          <div class="control-card-row">
+            <span class="key-pill-large">SHIFT</span>
+            <span class="control-desc">Sprint / Dash</span>
+          </div>
+          <div class="control-card-row">
+            <span class="key-pill-large">SPACE / K</span>
+            <span class="control-desc">Jump</span>
+          </div>
+          <div class="control-card-row">
+            <span class="key-pill-large">J / F / CLICK</span>
+            <span class="control-desc">Sword Attack</span>
+          </div>
+          <div class="control-card-row">
+            <span class="key-pill-large">E / CLICK</span>
+            <span class="control-desc">Interact / Inspect</span>
+          </div>
+        </div>
+      </aside>
     `;
 
     document.body.appendChild(container);
@@ -181,6 +206,11 @@ export class HUD {
 
     closeRelic?.addEventListener('click', () => {
       relicDrawer?.classList.add('hidden');
+    });
+
+    document.getElementById('open-welcome-modal-btn')?.addEventListener('click', () => {
+      AudioFX.playInspect();
+      GameBridge.emit(EVENTS.OPEN_WELCOME_MODAL);
     });
 
     // Handle clicks on project cards inside drawer
@@ -285,8 +315,7 @@ export class HUD {
 
         chip.scrollIntoView({
           behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center'
+          block: 'nearest'
         });
       }
     });

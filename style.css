@@ -356,99 +356,64 @@ canvas {
 }
 
 /* ==========================================================================
-   HUD Overlay: Floating Controls Hint
+   HUD Overlay: Left Side Reactive Skills Panel
    ========================================================================== */
 
-.hud-controls-hint {
+.hud-left-skills {
   position: fixed;
   top: 75px;
-  right: 18px;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  padding: 6px 10px;
+  left: 16px;
+  bottom: 16px;
+  width: 220px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 4px 8px 30px rgba(0, 0, 0, 0.55);
+}
+
+.skills-sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.skills-sidebar-title {
   font-family: var(--font-pixel);
-  font-size: 6px;
+  font-size: 8px;
+  color: var(--accent-gold);
+  letter-spacing: 0.6px;
+}
+
+.skills-sidebar-sub {
+  font-size: 10px;
   color: var(--text-muted);
-  z-index: 40;
-  pointer-events: none;
+  font-weight: 500;
 }
 
-.key-pill {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  padding: 2px 4px;
-  border-radius: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* ==========================================================================
-   HUD Overlay: Bottom Reactive Skills Bar
-   ========================================================================== */
-
-.hud-bottom-bar {
-  position: fixed;
-  bottom: 12px;
-  left: 18px;
-  right: 18px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--panel-border);
-  border-radius: 10px;
-  padding: 8px 14px;
-  z-index: 50;
+.skills-vertical-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6);
-}
-
-.skills-bar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.skills-title {
-  font-family: var(--font-pixel);
-  font-size: 7px;
-  color: var(--accent-gold);
-  letter-spacing: 0.5px;
-}
-
-.skills-status {
-  font-family: var(--font-pixel);
-  font-size: 6px;
-  color: var(--text-muted);
-  transition: all 0.3s ease;
-}
-
-.skills-status.active-pulse {
-  color: var(--accent-cyan);
-  animation: glow-pulse 1.2s infinite ease-in-out;
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.skills-scroll-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
   scrollbar-width: thin;
   scrollbar-color: #334155 transparent;
 }
 
-.skills-scroll-container::-webkit-scrollbar {
-  height: 4px;
+.skills-vertical-list::-webkit-scrollbar {
+  width: 4px;
 }
 
-.skills-scroll-container::-webkit-scrollbar-thumb {
+.skills-vertical-list::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 2px;
 }
@@ -457,52 +422,118 @@ canvas {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 8px;
   background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 5px 8px;
   font-size: 11px;
   font-weight: 600;
   color: var(--text-primary);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.chip-icon {
-  font-size: 12px;
-}
-
-.chip-name {
+.skill-chip .chip-name {
   font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chip-badge {
+.skill-chip .chip-badge {
   font-size: 8px;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.08);
-  padding: 1px 4px;
+  padding: 2px 5px;
   border-radius: 3px;
-  color: var(--text-muted);
+  color: var(--accent-cyan);
+  flex-shrink: 0;
 }
 
-/* Dynamic Active State */
+.skill-chip.highlighted,
 .skill-chip.skill-active {
   background: rgba(255, 209, 102, 0.22);
   border-color: var(--accent-gold);
   color: #fff;
-  transform: translateY(-2px) scale(1.04);
+  transform: translateX(4px);
   box-shadow: 0 0 16px rgba(255, 209, 102, 0.6);
 }
 
+.skill-chip.highlighted .chip-badge,
 .skill-chip.skill-active .chip-badge {
   background: var(--accent-gold);
   color: #0b0e14;
 }
 
-.skill-chip.skill-dimmed {
-  opacity: 0.35;
-  filter: grayscale(0.5);
+/* ==========================================================================
+   HUD Overlay: Right Side Prominent Controls Card
+   ========================================================================== */
+
+.hud-controls-card {
+  position: fixed;
+  top: 75px;
+  right: 16px;
+  width: 220px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
+  z-index: 45;
+  box-shadow: -4px 8px 30px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
 }
+
+.controls-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls-card-title {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--accent-cyan);
+  letter-spacing: 0.8px;
+}
+
+.controls-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.control-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.key-pill-large {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.control-desc {
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+
 
 /* ==========================================================================
    In-Website Dialog & Modals
@@ -871,98 +902,28 @@ canvas {
 }
 
 /* ==========================================================================
-   HUD Bottom Footer & Technical Arsenal Hotbar
+   Responsive Adaptations
    ========================================================================== */
 
-.hud-bottom-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(11, 14, 20, 0.92);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  pointer-events: auto;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+@media (max-width: 900px) {
+  .hud-left-skills {
+    width: 170px;
+    padding: 8px;
+  }
+  .hud-controls-card {
+    width: 180px;
+    padding: 8px 10px;
+  }
+  .welcome-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
-.footer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.footer-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer-title {
-  font-family: var(--font-pixel);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent-gold);
-  letter-spacing: 0.5px;
-}
-
-.footer-tip {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.skills-hotbar-scroll {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
-
-.skills-hotbar-scroll::-webkit-scrollbar {
-  height: 4px;
-}
-
-.skills-hotbar-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.skill-hotkey-slot {
-  flex-shrink: 0;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  padding: 4px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  transition: all 0.2s ease;
-}
-
-.skill-hotkey-slot.active {
-  background: rgba(77, 238, 234, 0.2);
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 10px rgba(77, 238, 234, 0.4);
-  transform: translateY(-2px);
-}
-
-.skill-code {
-  font-family: var(--font-pixel);
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.skill-cat {
-  font-size: 9px;
-  color: var(--accent-cyan);
-  text-transform: uppercase;
+@media (max-width: 680px) {
+  .hud-left-skills {
+    display: none;
+  }
+  .hud-controls-card {
+    display: none;
+  }
 }

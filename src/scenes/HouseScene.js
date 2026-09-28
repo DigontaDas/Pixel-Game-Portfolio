@@ -44,6 +44,9 @@ export default class HouseScene extends Phaser.Scene {
     // Audio & Pause listener
     GameBridge.on(EVENTS.SET_INPUT_PAUSED, (paused) => {
       this.isInputPaused = paused;
+      if (this.input && this.input.keyboard) {
+        this.input.keyboard.resetKeys();
+      }
       if (this.player && this.player.body) {
         this.player.body.setVelocity(0, 0);
         if (!this.isAttacking) {
@@ -107,10 +110,10 @@ export default class HouseScene extends Phaser.Scene {
     addWall(1080, 310, 80, 620);   // East outer border
 
     // 2. Room Perimeter Walls
-    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 160, x=45 to 380)
-    addWall(215, 80, 340, 160);
-    // North Wall Grand Hall (y=40 to 180, x=380 to 1040)
-    addWall(710, 110, 660, 150);
+    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 150, x=45 to 510)
+    addWall(277, 75, 465, 150);
+    // North Wall Grand Hall (y=40 to 175, x=510 to 1040)
+    addWall(775, 107, 530, 135);
     // West Wall (x=0 to 75, y=90 to 570)
     addWall(45, 330, 90, 480);
     // East Wall (x=1020 to 1100, y=175 to 570)
@@ -123,25 +126,28 @@ export default class HouseScene extends Phaser.Scene {
     addWall(520, 565, 80, 40);
 
     // 3. Interior Stone Partition Walls
-    // Thick stone dividing wall between West Wing and Grand Hall (x=370 to 430, y=60 to 290)
-    addWall(400, 175, 60, 230);
+    // Stone dividing pillar between West Wing and Grand Hall (y=210 to 285, x=395 to 420)
+    // Leaves upper hallway (y: 155 to 205) completely open so player can walk left into 2nd floor from stairs!
+    addWall(407, 247, 25, 75);
 
-    // Complete airtight solid wall covering horizontal stone divider between Kitchen and lower cellar:
-    // (x: 90 to 450, y: 285 to 355) - completely prevents walking inside the wall void
-    addWall(270, 320, 360, 70);
+    // Horizontal stone divider between Kitchen and lower cellar:
+    // (x: 90 to 415, y: 285 to 355) - completely frees stairs at x >= 415 so player can go up and down!
+    addWall(252, 320, 325, 70);
 
-    // Vertical black void channel dividing cellar from hallway:
-    // (x: 285 to 355, y: 320 to 600) - completely prevents walking inside vertical wall void
-    addWall(320, 460, 70, 280);
+    // Vertical stone wall dividing cellar from hallway, with wide open doorway (y: 395 to 470):
+    // Upper wall segment (y: 320 to 395)
+    addWall(340, 357, 30, 75);
+    // Lower wall segment (y: 470 to 570)
+    addWall(340, 520, 30, 100);
 
     // 4. Furniture, Counters & Tables (100% Solid colliders covering table tops and chairs so player CANNOT walk on them)
-    // Kitchen Prep Island Table & food
+    // Kitchen Prep Island Table & food (x: 190 to 360, y: 217 to 263)
     addWall(275, 240, 170, 46);
     // Bar Counter & Stools
     addWall(540, 330, 130, 32);
     addWall(610, 300, 26, 64);
-    // Bar Back Shelves with glasses & bottles
-    addWall(530, 220, 110, 40);
+    // Bar Back Shelves with glasses & bottles (x: 510 to 620, y: 200 to 240 - clear of stairs)
+    addWall(565, 220, 110, 40);
 
     // West Lab Tables & Stations
     addWall(200, 440, 90, 42); // Cellar counter (SE-Mobile UNet)
@@ -410,6 +416,23 @@ export default class HouseScene extends Phaser.Scene {
       if (pointer.leftButtonDown() && !this.isInputPaused) {
         this.triggerAttack();
       }
+    });
+
+    // Reset stuck keys on window blur or tab switch
+    const resetAllKeys = () => {
+      if (this.input && this.input.keyboard) {
+        this.input.keyboard.resetKeys();
+      }
+      if (this.player && this.player.body) {
+        this.player.body.setVelocity(0, 0);
+        if (!this.isAttacking) {
+          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
+        }
+      }
+    };
+    window.addEventListener('blur', resetAllKeys);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) resetAllKeys();
     });
   }
 
