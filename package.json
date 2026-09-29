@@ -1,7 +1,7 @@
 {
   "name": "digonta-rpg-portfolio",
   "version": "1.0.0",
-  "description": "Interactive 2D Top-Down RPG Portfolio for Digonta DAs",
+  "description": "Interactive 2D Top-Down RPG Portfolio for Digonta Das",
   "type": "module",
   "scripts": {
     "dev": "vite",

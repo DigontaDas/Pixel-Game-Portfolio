@@ -439,9 +439,7 @@ export default class HouseScene extends Phaser.Scene {
       up: Phaser.Input.Keyboard.KeyCodes.UP,
       down: Phaser.Input.Keyboard.KeyCodes.DOWN,
       left: Phaser.Input.Keyboard.KeyCodes.LEFT,
-      right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
-      space: Phaser.Input.Keyboard.KeyCodes.SPACE,
-      shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
+      right: Phaser.Input.Keyboard.KeyCodes.RIGHT
     }, false);
     this.wasd = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -452,12 +450,11 @@ export default class HouseScene extends Phaser.Scene {
     }, false);
 
     this.keys = this.input.keyboard.addKeys({
-      attack: Phaser.Input.Keyboard.KeyCodes.J,
       jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
       shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
     }, false);
 
-    // Left-click for sword attack
+    // Left-click is the single desktop attack control.
     this.input.on('pointerdown', (pointer) => {
       if (pointer.leftButtonDown() && !this.isInputPaused) {
         this.triggerAttack();
@@ -608,14 +605,9 @@ export default class HouseScene extends Phaser.Scene {
       return;
     }
 
-    // Jump with Space ONLY
-    if (Phaser.Input.Keyboard.JustDown(this.keys.jump) || Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+    // Jump with Space only.
+    if (Phaser.Input.Keyboard.JustDown(this.keys.jump)) {
       this.triggerJump();
-    }
-
-    // Attack with J ONLY (or left mouse click)
-    if (Phaser.Input.Keyboard.JustDown(this.keys.attack)) {
-      this.triggerAttack();
     }
 
     let vx = 0;
@@ -651,7 +643,8 @@ export default class HouseScene extends Phaser.Scene {
     }
 
     const isSprinting = this.keys.shift.isDown && (hasPhysicalKey('ShiftLeft') || hasPhysicalKey('ShiftRight'));
-    const currentSpeed = isSprinting ? 215 : 135;
+    const isMobileMoving = window.MobileControls && (window.MobileControls.vx !== 0 || window.MobileControls.vy !== 0);
+    const currentSpeed = isSprinting ? 215 : isMobileMoving ? 190 : 135;
 
     if (vx !== 0 && vy !== 0) {
       vx *= 0.7071;
@@ -673,19 +666,19 @@ export default class HouseScene extends Phaser.Scene {
 
     // Directional Animation State Machine
     if (!this.isAttacking) {
-      if (isLeft) {
+      if (vx < -0.1) {
         this.lastDirection = 'side';
         this.player.setFlipX(true);
         this.player.anims.play('player-run-side', true);
-      } else if (isRight) {
+      } else if (vx > 0.1) {
         this.lastDirection = 'side';
         this.player.setFlipX(false);
         this.player.anims.play('player-run-side', true);
-      } else if (isUp) {
+      } else if (vy < -0.1) {
         this.lastDirection = 'up';
         this.player.setFlipX(false);
         this.player.anims.play('player-run-up', true);
-      } else if (isDown) {
+      } else if (vy > 0.1) {
         this.lastDirection = 'down';
         this.player.setFlipX(false);
         this.player.anims.play('player-run-down', true);

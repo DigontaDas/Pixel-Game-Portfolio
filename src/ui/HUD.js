@@ -56,8 +56,8 @@ export class HUD {
           <a href="${PERSONAL_INFO.socials.cvFile}" download="Digonta_DAs_CV.pdf" class="hud-btn cv-btn" title="Download Official PDF Resume">
             RESUME PDF
           </a>
-          <button class="hud-btn contact-btn" id="open-welcome-modal-btn" title="Contact Digonta or view portfolio menu" style="background: rgba(255, 209, 102, 0.15); border-color: #ffd166; color: #ffd166; font-weight: 700;">
-            CONTACT ME
+          <button class="hud-btn contact-btn" id="open-welcome-modal-btn" title="About Digonta" style="background: rgba(255, 209, 102, 0.15); border-color: #ffd166; color: #ffd166; font-weight: 700;">
+            PROFILE
           </button>
           <button class="hud-btn audio-btn" id="audio-toggle-btn" title="Toggle Sound">
             <span class="btn-icon" id="audio-icon">SOUND ON</span>
@@ -130,15 +130,15 @@ export class HUD {
             <span class="control-desc">Sprint / Dash</span>
           </div>
           <div class="control-card-row">
-            <span class="key-pill-large">SPACE / K</span>
+            <span class="key-pill-large">SPACE</span>
             <span class="control-desc">Jump</span>
           </div>
           <div class="control-card-row">
-            <span class="key-pill-large">J / F / CLICK</span>
+            <span class="key-pill-large">CLICK</span>
             <span class="control-desc">Sword Attack</span>
           </div>
           <div class="control-card-row">
-            <span class="key-pill-large">E / CLICK</span>
+            <span class="key-pill-large">E</span>
             <span class="control-desc">Interact / Inspect</span>
           </div>
         </div>
@@ -284,10 +284,22 @@ export class HUD {
     const icon = document.getElementById('audio-icon');
     if (!btn || !icon) return;
 
+    const isMuted = AudioFX.isMuted();
+    icon.textContent = isMuted ? "SOUND OFF" : "SOUND ON";
+    btn.classList.toggle('muted', isMuted);
+
+    btn.addEventListener('keydown', (event) => {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        btn.blur();
+      }
+    });
+
     btn.addEventListener('click', () => {
       const isMuted = AudioFX.toggleMute();
       icon.textContent = isMuted ? "SOUND OFF" : "SOUND ON";
       btn.classList.toggle('muted', isMuted);
+      btn.blur();
     });
   }
 

@@ -1,10 +1,10 @@
 /**
- * Portfolio Data Matrix for Digonta DAs
+ * Portfolio Data Matrix for Digonta Das
  * Strictly curated from Digonta_CV.pdf and verified GitHub repositories.
  */
 
 export const PERSONAL_INFO = {
-  name: "Digonta DAs",
+  name: "Digonta Das",
   title: "AI Engineer | Computer Vision Engineer | Web Developer",
   email: "digontadas0171@gmail.com",
   phone: "+8801790029046",

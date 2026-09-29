@@ -38,6 +38,7 @@ const initMobileControls = () => {
   const movePad = document.getElementById('move-pad');
   const moveThumb = document.getElementById('move-thumb');
   const radius = 52;
+  let activePointerId = null;
 
   const updateStick = (clientX, clientY) => {
     const rect = movePad.getBoundingClientRect();
@@ -64,18 +65,24 @@ const initMobileControls = () => {
 
   movePad.addEventListener('pointerdown', (event) => {
     event.preventDefault();
+    activePointerId = event.pointerId;
     movePad.setPointerCapture(event.pointerId);
     updateStick(event.clientX, event.clientY);
   });
 
   movePad.addEventListener('pointermove', (event) => {
-    if (event.pressure === 0) return;
+    if (event.pointerId !== activePointerId) return;
     updateStick(event.clientX, event.clientY);
   });
 
-  movePad.addEventListener('pointerup', resetStick);
-  movePad.addEventListener('pointerleave', resetStick);
-  movePad.addEventListener('pointercancel', resetStick);
+  const stopStick = (event) => {
+    if (event.pointerId !== activePointerId) return;
+    activePointerId = null;
+    resetStick();
+  };
+  movePad.addEventListener('pointerup', stopStick);
+  movePad.addEventListener('pointercancel', stopStick);
+  movePad.addEventListener('lostpointercapture', stopStick);
 
   const actionButtons = container.querySelectorAll('.mobile-action-btn');
   actionButtons.forEach((button) => {
@@ -137,6 +144,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Greet visitor with Welcome & Contact Portal on website entry
   setTimeout(() => {
-    modalManager.renderWelcomeContactModal();
+    modalManager.renderWelcomeModal();
   }, 350);
 });

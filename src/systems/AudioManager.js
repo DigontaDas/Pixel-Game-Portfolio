@@ -6,8 +6,10 @@
 class AudioManager {
   constructor() {
     this.ctx = null;
-    // Sound is always ON by default as requested
     this.muted = false;
+    try {
+      this.muted = localStorage.getItem('digonta_rpg_muted') === 'true';
+    } catch (e) {}
     this.lastStepTime = 0;
 
     // BGM (Background Music) system
@@ -42,17 +44,16 @@ class AudioManager {
   }
 
   startMusic() {
-    this.muted = false;
     this.initContext();
     this.playBGM();
     if (this.bgmAudio) {
-      this.bgmAudio.volume = this.bgmVolume;
-      this.bgmAudio.play().catch(() => {});
+      this.bgmAudio.volume = this.muted ? 0 : this.bgmVolume;
+      if (!this.muted) this.bgmAudio.play().catch(() => {});
     }
     const icon = document.getElementById('audio-icon');
     const btn = document.getElementById('audio-toggle-btn');
-    if (icon) icon.textContent = "SOUND ON";
-    if (btn) btn.classList.remove('muted');
+    if (icon) icon.textContent = this.muted ? "SOUND OFF" : "SOUND ON";
+    if (btn) btn.classList.toggle('muted', this.muted);
   }
 
   playBGM(trackUrl) {

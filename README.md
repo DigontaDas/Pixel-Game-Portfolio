@@ -1,4 +1,4 @@
-# Digonta DAs | Interactive 16-Bit RPG Portfolio
+# Digonta Das | Interactive 16-Bit RPG Portfolio
 
 An interactive, gamified 2D top-down RPG developer portfolio built with **Phaser 4**, **Vite**, and **Vanilla JavaScript/CSS**. Explore an open medieval fantasy realm, tour research laboratories, inspect AI/ML and full-stack projects, sparring with training dummies, and interact with characters to review credentials and roadmaps.
 
@@ -46,9 +46,9 @@ An interactive, gamified 2D top-down RPG developer portfolio built with **Phaser
 | :--- | :--- | :--- |
 | **W, A, S, D** or **Arrow Keys** | **Move Hero** | 8-directional movement with diagonal normalization |
 | **Shift** (Hold) | **Sprint** | Increases movement speed from 135 to 215 px/s |
-| **E** or **Space** | **Interact** | Open stations, talk to NPCs, view projects/credentials |
-| **J**, **F** or **Left-Click** | **Sword Slash** | Knight combat attack with sword hitboxes and sound FX |
-| **K** | **Jump** | Physics-grounded visual jump arc with dynamic shadow scaling |
+| **E** | **Interact** | Open stations, talk to NPCs, view projects/credentials |
+| **Left-Click** | **Sword Slash** | Knight combat attack with sword hitboxes and sound FX |
+| **Space** | **Jump** | Physics-grounded visual jump arc with dynamic shadow scaling |
 | **Escape** | **Close Modal** | Closes any open dialog, modal, or welcome portal |
 
 > **Movement Engine Feature**: Built with a dedicated hardware key-state arbiter (`activeKeyCodes`), guaranteeing keys never get stuck or repeat phantom movements even during window blur or tab changes.
@@ -186,7 +186,7 @@ This repository is pre-configured with a GitHub Actions workflow (`.github/workf
 
 ## Author & Contact
 
-**Digonta DAs**  
+**Digonta Das**  
 *AI Engineer & Full-Stack Developer*  
 BRAC University CSE Graduate  
 Specialist in Volumetric 3D CNNs, Deep Learning, and Distributed Cloud Systems.
