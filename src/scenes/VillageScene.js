@@ -208,7 +208,6 @@ export default class VillageScene extends Phaser.Scene {
       { x: 100, y: 380, type: 'tree_small' },
       { x: 95, y: 580, type: 'tree_small' },
       { x: 105, y: 740, type: 'tree_small' },
-      { x: 95, y: 920, type: 'tree_small' },
       { x: 100, y: 1060, type: 'tree_small' },
 
       // East Border
@@ -268,9 +267,6 @@ export default class VillageScene extends Phaser.Scene {
       { x: 1320, y: 480, type: 'tree_oak' },
       { x: 1350, y: 550, type: 'tree_pine_tall' },
       { x: 1420, y: 490, type: 'tree_spruce' },
-      { x: 360, y: 950, type: 'tree_spruce' },
-      { x: 380, y: 1020, type: 'tree_pine' },
-      { x: 450, y: 960, type: 'tree_oak' },
       { x: 840, y: 930, type: 'tree_pine' },
       { x: 860, y: 1000, type: 'tree_oak' },
       { x: 930, y: 940, type: 'tree_spruce' },
@@ -306,7 +302,7 @@ export default class VillageScene extends Phaser.Scene {
     this.bushes = [];
     const bushPositions = [
       [550, 480], [730, 480],
-      [990, 380], [1210, 380], [150, 890], [350, 890],
+      [990, 380], [1210, 380],
       [420, 620], [840, 620], [1060, 480], [1180, 580],
       [380, 720], [480, 720], [820, 850], [940, 850],
       [460, 640], [820, 640], [460, 730], [820, 730],
@@ -1186,8 +1182,29 @@ export default class VillageScene extends Phaser.Scene {
       }
     });
 
+    // Physical hardware key tracker to guarantee no keys ever stick
+    this.activeKeyCodes = new Set();
+    const onKeyDown = (e) => {
+      this.activeKeyCodes.add(e.code);
+    };
+    const onKeyUp = (e) => {
+      this.activeKeyCodes.delete(e.code);
+      if (this.activeKeyCodes.size === 0) {
+        if (this.input && this.input.keyboard) {
+          this.input.keyboard.resetKeys();
+        }
+        if (this.player && this.player.body && !this.isAttacking) {
+          this.player.body.setVelocity(0, 0);
+          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
+        }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+
     // Reset stuck keys on window blur or tab switch
     const resetAllKeys = () => {
+      this.activeKeyCodes.clear();
       if (this.input && this.input.keyboard) {
         this.input.keyboard.resetKeys();
       }
@@ -1389,17 +1406,18 @@ export default class VillageScene extends Phaser.Scene {
     let vx = 0;
     let vy = 0;
 
-    const isLeft = this.cursors.left.isDown || this.wasd.left.isDown;
-    const isRight = this.cursors.right.isDown || this.wasd.right.isDown;
-    const isUp = this.cursors.up.isDown || this.wasd.up.isDown;
-    const isDown = this.cursors.down.isDown || this.wasd.down.isDown;
+    const hasPhysicalKey = (code) => this.activeKeyCodes && this.activeKeyCodes.has(code);
+    const isLeft = (this.cursors.left.isDown || this.wasd.left.isDown) && (hasPhysicalKey('ArrowLeft') || hasPhysicalKey('KeyA'));
+    const isRight = (this.cursors.right.isDown || this.wasd.right.isDown) && (hasPhysicalKey('ArrowRight') || hasPhysicalKey('KeyD'));
+    const isUp = (this.cursors.up.isDown || this.wasd.up.isDown) && (hasPhysicalKey('ArrowUp') || hasPhysicalKey('KeyW'));
+    const isDown = (this.cursors.down.isDown || this.wasd.down.isDown) && (hasPhysicalKey('ArrowDown') || hasPhysicalKey('KeyS'));
 
     if (isLeft) vx -= 1;
     if (isRight) vx += 1;
     if (isUp) vy -= 1;
     if (isDown) vy += 1;
 
-    const isSprinting = this.keys.shift.isDown;
+    const isSprinting = this.keys.shift.isDown && (hasPhysicalKey('ShiftLeft') || hasPhysicalKey('ShiftRight'));
     const currentSpeed = isSprinting ? 215 : 135;
 
     if (vx !== 0 && vy !== 0) {

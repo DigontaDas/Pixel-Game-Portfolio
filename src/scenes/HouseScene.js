@@ -110,10 +110,21 @@ export default class HouseScene extends Phaser.Scene {
     addWall(1080, 310, 80, 620);   // East outer border
 
     // 2. Room Perimeter Walls
-    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 150, x=45 to 510)
-    addWall(277, 75, 465, 150);
-    // North Wall Grand Hall (y=40 to 175, x=510 to 1040)
-    addWall(775, 107, 530, 135);
+    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 140, x=45 to 400)
+    addWall(222, 70, 355, 140);
+    // Stone bread oven upper block (x: 400 to 505, y: 0 to 155)
+    addWall(452, 77, 105, 155);
+
+    // North Wall Grand Hall / Bar Backroom (y=40 to 175, x=505 to 835)
+    addWall(670, 107, 330, 135);
+
+    // North Wall Second Floor (Elevated VIP Dining Room):
+    // Wood paneling and windows above elevated floor (y=40 to 110, x=835 to 1050)
+    addWall(942, 75, 215, 70);
+
+    // West Wall of Second Floor (dividing it from dark void above bar counter: x=805 to 835, y=60 to 200)
+    addWall(820, 130, 30, 140);
+
     // West Wall (x=0 to 75, y=90 to 570)
     addWall(45, 330, 90, 480);
     // East Wall (x=1020 to 1100, y=175 to 570)
@@ -127,7 +138,7 @@ export default class HouseScene extends Phaser.Scene {
 
     // 3. Interior Stone Partition Walls
     // Stone dividing pillar between West Wing and Grand Hall (y=210 to 285, x=395 to 420)
-    // Leaves upper hallway (y: 155 to 205) completely open so player can walk left into 2nd floor from stairs!
+    // Leaves upper hallway (y: 155 to 210) completely open so player can walk left into 2nd floor from stairs!
     addWall(407, 247, 25, 75);
 
     // Horizontal stone divider between Kitchen and lower cellar:
@@ -140,7 +151,7 @@ export default class HouseScene extends Phaser.Scene {
     // Lower wall segment (y: 470 to 570)
     addWall(340, 520, 30, 100);
 
-    // 4. Furniture, Counters & Tables (100% Solid colliders covering table tops and chairs so player CANNOT walk on them)
+    // 4. Furniture, Counters & Tables (Solid colliders covering table tops and chairs so player CANNOT walk on them)
     // Kitchen Prep Island Table & food (x: 190 to 360, y: 217 to 263)
     addWall(275, 240, 170, 46);
     // Bar Counter & Stools
@@ -160,7 +171,12 @@ export default class HouseScene extends Phaser.Scene {
     addWall(755, 580, 110, 64); // Clarity Platform (Blue cloth table + chairs)
     addWall(965, 470, 60, 240);  // Long Banquet Table on far right
     addWall(555, 565, 90, 50);   // Center bottom table (Red cloth with bottles)
-    addWall(885, 225, 70, 70);   // Elevated VIP round table & chairs
+
+    // Elevated VIP Second Floor: Table and potted plants (cleanly positioned off the staircase!)
+    addWall(930, 135, 54, 40);   // Elevated VIP round table & chairs (x: 903 to 957, y: 115 to 155)
+    addWall(875, 105, 22, 20);   // Potted plant top left
+    addWall(1030, 105, 22, 20);  // Potted plant top right
+    addWall(910, 260, 16, 24);   // Narrow torch post on stairs (wide open passage on both sides)
 
     // Grand Hall Chandelier Columns / Torches
     addWall(650, 420, 28, 28);
@@ -418,8 +434,29 @@ export default class HouseScene extends Phaser.Scene {
       }
     });
 
+    // Physical hardware key tracker to guarantee no keys ever stick
+    this.activeKeyCodes = new Set();
+    const onKeyDown = (e) => {
+      this.activeKeyCodes.add(e.code);
+    };
+    const onKeyUp = (e) => {
+      this.activeKeyCodes.delete(e.code);
+      if (this.activeKeyCodes.size === 0) {
+        if (this.input && this.input.keyboard) {
+          this.input.keyboard.resetKeys();
+        }
+        if (this.player && this.player.body && !this.isAttacking) {
+          this.player.body.setVelocity(0, 0);
+          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
+        }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+
     // Reset stuck keys on window blur or tab switch
     const resetAllKeys = () => {
+      this.activeKeyCodes.clear();
       if (this.input && this.input.keyboard) {
         this.input.keyboard.resetKeys();
       }
@@ -546,17 +583,18 @@ export default class HouseScene extends Phaser.Scene {
     let vx = 0;
     let vy = 0;
 
-    const isLeft = this.cursors.left.isDown || this.wasd.left.isDown;
-    const isRight = this.cursors.right.isDown || this.wasd.right.isDown;
-    const isUp = this.cursors.up.isDown || this.wasd.up.isDown;
-    const isDown = this.cursors.down.isDown || this.wasd.down.isDown;
+    const hasPhysicalKey = (code) => this.activeKeyCodes && this.activeKeyCodes.has(code);
+    const isLeft = (this.cursors.left.isDown || this.wasd.left.isDown) && (hasPhysicalKey('ArrowLeft') || hasPhysicalKey('KeyA'));
+    const isRight = (this.cursors.right.isDown || this.wasd.right.isDown) && (hasPhysicalKey('ArrowRight') || hasPhysicalKey('KeyD'));
+    const isUp = (this.cursors.up.isDown || this.wasd.up.isDown) && (hasPhysicalKey('ArrowUp') || hasPhysicalKey('KeyW'));
+    const isDown = (this.cursors.down.isDown || this.wasd.down.isDown) && (hasPhysicalKey('ArrowDown') || hasPhysicalKey('KeyS'));
 
     if (isLeft) vx -= 1;
     if (isRight) vx += 1;
     if (isUp) vy -= 1;
     if (isDown) vy += 1;
 
-    const isSprinting = this.keys.shift.isDown;
+    const isSprinting = this.keys.shift.isDown && (hasPhysicalKey('ShiftLeft') || hasPhysicalKey('ShiftRight'));
     const currentSpeed = isSprinting ? 215 : 135;
 
     if (vx !== 0 && vy !== 0) {
