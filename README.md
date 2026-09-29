@@ -1,4 +1,4 @@
-# Digonta Das | Interactive 16-Bit RPG Portfolio
+# Digonta DAs | Interactive 16-Bit RPG Portfolio
 
 An interactive, gamified 2D top-down RPG developer portfolio built with **Phaser 4**, **Vite**, and **Vanilla JavaScript/CSS**. Explore an open medieval fantasy realm, tour research laboratories, inspect AI/ML and full-stack projects, sparring with training dummies, and interact with characters to review credentials and roadmaps.
 
@@ -186,7 +186,7 @@ This repository is pre-configured with a GitHub Actions workflow (`.github/workf
 
 ## Author & Contact
 
-**Digonta Das**  
+**Digonta DAs**  
 *AI Engineer & Full-Stack Developer*  
 BRAC University CSE Graduate  
 Specialist in Volumetric 3D CNNs, Deep Learning, and Distributed Cloud Systems.

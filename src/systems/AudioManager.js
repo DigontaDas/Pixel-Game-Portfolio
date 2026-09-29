@@ -6,28 +6,19 @@
 class AudioManager {
   constructor() {
     this.ctx = null;
+    // Sound is always ON by default as requested
     this.muted = false;
     this.lastStepTime = 0;
 
     // BGM (Background Music) system
     this.bgmAudio = null;
     this.bgmStarted = false;
-    this.bgmVolume = 0.25;
+    this.bgmVolume = 0.30;
     this.bgmTracks = [
       '/assets/audio/bgm_littleroot_town.mp3',
       '/assets/audio/bgm_route101.mp3'
     ];
     this.bgmCurrentIndex = 0;
-    
-    // Read saved preference if available
-    try {
-      const saved = localStorage.getItem("digonta_rpg_muted");
-      if (saved !== null) {
-        this.muted = saved === "true";
-      }
-    } catch (e) {
-      // localStorage might fail in restricted environments
-    }
 
     // Auto-start BGM on first user interaction (bypasses browser autoplay policy)
     this._startBGMOnInteraction();
@@ -37,17 +28,31 @@ class AudioManager {
     if (typeof window === "undefined") return;
 
     const startHandler = () => {
-      if (!this.bgmStarted) {
-        this.playBGM();
-      }
+      this.startMusic();
       window.removeEventListener('click', startHandler);
       window.removeEventListener('keydown', startHandler);
       window.removeEventListener('pointerdown', startHandler);
+      window.removeEventListener('touchstart', startHandler);
     };
 
-    window.addEventListener('click', startHandler, { once: false });
-    window.addEventListener('keydown', startHandler, { once: false });
-    window.addEventListener('pointerdown', startHandler, { once: false });
+    window.addEventListener('click', startHandler, { once: false, passive: true });
+    window.addEventListener('keydown', startHandler, { once: false, passive: true });
+    window.addEventListener('pointerdown', startHandler, { once: false, passive: true });
+    window.addEventListener('touchstart', startHandler, { once: false, passive: true });
+  }
+
+  startMusic() {
+    this.muted = false;
+    this.initContext();
+    this.playBGM();
+    if (this.bgmAudio) {
+      this.bgmAudio.volume = this.bgmVolume;
+      this.bgmAudio.play().catch(() => {});
+    }
+    const icon = document.getElementById('audio-icon');
+    const btn = document.getElementById('audio-toggle-btn');
+    if (icon) icon.textContent = "SOUND ON";
+    if (btn) btn.classList.remove('muted');
   }
 
   playBGM(trackUrl) {

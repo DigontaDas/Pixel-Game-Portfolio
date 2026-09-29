@@ -30,6 +30,30 @@ export default class VillageScene extends Phaser.Scene {
     this.lastRustleTime = 0;
   }
 
+  isTypingInputTarget(target = document.activeElement) {
+    if (!target) return false;
+    if (target.isContentEditable) return true;
+    if (target.closest) {
+      if (target.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) {
+        return true;
+      }
+    }
+    return ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+  }
+
+  clearMovementInputState() {
+    if (this.activeKeyCodes) this.activeKeyCodes.clear();
+    if (this.input && this.input.keyboard) {
+      this.input.keyboard.resetKeys();
+    }
+    if (this.player && this.player.body) {
+      this.player.body.setVelocity(0, 0);
+      if (!this.isAttacking && this.player.anims) {
+        this.player.anims.play(`player-idle-${this.lastDirection}`, true);
+      }
+    }
+  }
+
   init(data) {
     this.spawnCoords = data && data.spawn ? data.spawn : { x: 640, y: 440 };
     this.isTransitioning = true;
@@ -46,6 +70,7 @@ export default class VillageScene extends Phaser.Scene {
     // Audio & Pause listener
     GameBridge.on(EVENTS.SET_INPUT_PAUSED, (paused) => {
       this.isInputPaused = paused;
+      if (this.activeKeyCodes) this.activeKeyCodes.clear();
       if (this.input && this.input.keyboard) {
         this.input.keyboard.resetKeys();
       }
@@ -1158,22 +1183,27 @@ export default class VillageScene extends Phaser.Scene {
   }
 
   setupInputs() {
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.addKeys({
+      up: Phaser.Input.Keyboard.KeyCodes.UP,
+      down: Phaser.Input.Keyboard.KeyCodes.DOWN,
+      left: Phaser.Input.Keyboard.KeyCodes.LEFT,
+      right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+      shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
+    }, false);
     this.wasd = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
       left: Phaser.Input.Keyboard.KeyCodes.A,
       down: Phaser.Input.Keyboard.KeyCodes.S,
       right: Phaser.Input.Keyboard.KeyCodes.D,
-      interact: Phaser.Input.Keyboard.KeyCodes.E,
-      space: Phaser.Input.Keyboard.KeyCodes.SPACE
-    });
+      interact: Phaser.Input.Keyboard.KeyCodes.E
+    }, false);
 
     this.keys = this.input.keyboard.addKeys({
-      attackJ: Phaser.Input.Keyboard.KeyCodes.J,
-      attackF: Phaser.Input.Keyboard.KeyCodes.F,
-      jumpK: Phaser.Input.Keyboard.KeyCodes.K,
+      attack: Phaser.Input.Keyboard.KeyCodes.J,
+      jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
       shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
-    });
+    }, false);
 
     // Left-click for sword attack
     this.input.on('pointerdown', (pointer) => {
@@ -1185,18 +1215,21 @@ export default class VillageScene extends Phaser.Scene {
     // Physical hardware key tracker to guarantee no keys ever stick
     this.activeKeyCodes = new Set();
     const onKeyDown = (e) => {
+      if (this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
+        this.clearMovementInputState();
+        return;
+      }
       this.activeKeyCodes.add(e.code);
     };
     const onKeyUp = (e) => {
+      if (this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
+        this.activeKeyCodes.delete(e.code);
+        this.clearMovementInputState();
+        return;
+      }
       this.activeKeyCodes.delete(e.code);
       if (this.activeKeyCodes.size === 0) {
-        if (this.input && this.input.keyboard) {
-          this.input.keyboard.resetKeys();
-        }
-        if (this.player && this.player.body && !this.isAttacking) {
-          this.player.body.setVelocity(0, 0);
-          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
-        }
+        this.clearMovementInputState();
       }
     };
     window.addEventListener('keydown', onKeyDown);
@@ -1204,20 +1237,19 @@ export default class VillageScene extends Phaser.Scene {
 
     // Reset stuck keys on window blur or tab switch
     const resetAllKeys = () => {
-      this.activeKeyCodes.clear();
-      if (this.input && this.input.keyboard) {
-        this.input.keyboard.resetKeys();
-      }
-      if (this.player && this.player.body) {
-        this.player.body.setVelocity(0, 0);
-        if (!this.isAttacking) {
-          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
-        }
-      }
+      this.clearMovementInputState();
     };
     window.addEventListener('blur', resetAllKeys);
-    document.addEventListener('visibilitychange', () => {
+    const onVisibilityChange = () => {
       if (document.hidden) resetAllKeys();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      resetAllKeys();
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', resetAllKeys);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     });
   }
 
@@ -1394,13 +1426,19 @@ export default class VillageScene extends Phaser.Scene {
 
     if (this.isInputPaused) return;
 
-    // Combat & Jump Key Triggers
-    if (Phaser.Input.Keyboard.JustDown(this.keys.attackJ) || Phaser.Input.Keyboard.JustDown(this.keys.attackF)) {
-      this.triggerAttack();
+    if (this.isTypingInputTarget()) {
+      this.clearMovementInputState();
+      return;
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.keys.jumpK)) {
+    // Jump with Space ONLY
+    if (Phaser.Input.Keyboard.JustDown(this.keys.jump) || Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
       this.triggerJump();
+    }
+
+    // Attack with J ONLY (or left mouse click)
+    if (Phaser.Input.Keyboard.JustDown(this.keys.attack)) {
+      this.triggerAttack();
     }
 
     let vx = 0;
@@ -1416,6 +1454,24 @@ export default class VillageScene extends Phaser.Scene {
     if (isRight) vx += 1;
     if (isUp) vy -= 1;
     if (isDown) vy += 1;
+
+    // Mobile Virtual Gamepad Input Integration
+    if (window.MobileControls) {
+      if (window.MobileControls.vx !== 0) vx = window.MobileControls.vx;
+      if (window.MobileControls.vy !== 0) vy = window.MobileControls.vy;
+      if (window.MobileControls.attackPressed) {
+        window.MobileControls.attackPressed = false;
+        this.triggerAttack();
+      }
+      if (window.MobileControls.jumpPressed) {
+        window.MobileControls.jumpPressed = false;
+        this.triggerJump();
+      }
+      if (window.MobileControls.interactPressed) {
+        window.MobileControls.interactPressed = false;
+        this.triggerActiveInteraction();
+      }
+    }
 
     const isSprinting = this.keys.shift.isDown && (hasPhysicalKey('ShiftLeft') || hasPhysicalKey('ShiftRight'));
     const currentSpeed = isSprinting ? 215 : 135;
@@ -1483,16 +1539,7 @@ export default class VillageScene extends Phaser.Scene {
     // Proximity Trigger Checks
     this.checkProximities();
 
-    // Interact Action (Space)
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || Phaser.Input.Keyboard.JustDown(this.wasd.space)) {
-      if (this.currentInteractable) {
-        this.triggerActiveInteraction();
-      } else {
-        this.triggerJump();
-      }
-    }
-
-    // Interact Action (E)
+    // Interact Action (E ONLY - Space is strictly for jumping!)
     if (Phaser.Input.Keyboard.JustDown(this.wasd.interact)) {
       this.triggerActiveInteraction();
     }
@@ -1605,7 +1652,7 @@ export default class VillageScene extends Phaser.Scene {
       case 'linkedin':
         GameBridge.emit(EVENTS.OPEN_SOCIAL_MODAL, {
           platform: "LinkedIn",
-          username: "Digonta Das",
+          username: "Digonta DAs",
           url: PERSONAL_INFO.socials.linkedin,
           tagline: "Connect with Digonta for AI Engineering, Research Collaborations, and Opportunities."
         });

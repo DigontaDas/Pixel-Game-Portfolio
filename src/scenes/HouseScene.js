@@ -27,6 +27,30 @@ export default class HouseScene extends Phaser.Scene {
     this.lastStepTime = 0;
   }
 
+  isTypingInputTarget(target = document.activeElement) {
+    if (!target) return false;
+    if (target.isContentEditable) return true;
+    if (target.closest) {
+      if (target.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) {
+        return true;
+      }
+    }
+    return ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+  }
+
+  clearMovementInputState() {
+    if (this.activeKeyCodes) this.activeKeyCodes.clear();
+    if (this.input && this.input.keyboard) {
+      this.input.keyboard.resetKeys();
+    }
+    if (this.player && this.player.body) {
+      this.player.body.setVelocity(0, 0);
+      if (!this.isAttacking && this.player.anims) {
+        this.player.anims.play(`player-idle-${this.lastDirection}`, true);
+      }
+    }
+  }
+
   init(data) {
     // Spawn safely in Grand Hall foyer, facing north into the room
     this.spawnCoords = data && data.spawn ? data.spawn : { x: 520, y: 460 };
@@ -44,6 +68,7 @@ export default class HouseScene extends Phaser.Scene {
     // Audio & Pause listener
     GameBridge.on(EVENTS.SET_INPUT_PAUSED, (paused) => {
       this.isInputPaused = paused;
+      if (this.activeKeyCodes) this.activeKeyCodes.clear();
       if (this.input && this.input.keyboard) {
         this.input.keyboard.resetKeys();
       }
@@ -125,8 +150,8 @@ export default class HouseScene extends Phaser.Scene {
     // West Wall of Second Floor (dividing it from dark void above bar counter: x=805 to 835, y=60 to 200)
     addWall(820, 130, 30, 140);
 
-    // West Wall (x=0 to 75, y=90 to 570)
-    addWall(45, 330, 90, 480);
+    // West Wall (clears cellar stairs at x: 20 to 80)
+    addWall(10, 310, 20, 620);
     // East Wall (x=1020 to 1100, y=175 to 570)
     addWall(1050, 370, 70, 400);
     // South Wall Left of doorway (x=60 to 495, y=550 to 620)
@@ -142,8 +167,8 @@ export default class HouseScene extends Phaser.Scene {
     addWall(407, 247, 25, 75);
 
     // Horizontal stone divider between Kitchen and lower cellar:
-    // (x: 90 to 415, y: 285 to 355) - completely frees stairs at x >= 415 so player can go up and down!
-    addWall(252, 320, 325, 70);
+    // (x: 85 to 415, y: 285 to 355) - completely frees both cellar stairs and middle stairs!
+    addWall(250, 320, 330, 70);
 
     // Vertical stone wall dividing cellar from hallway, with wide open doorway (y: 395 to 470):
     // Upper wall segment (y: 320 to 395)
@@ -154,9 +179,9 @@ export default class HouseScene extends Phaser.Scene {
     // 4. Furniture, Counters & Tables (Solid colliders covering table tops and chairs so player CANNOT walk on them)
     // Kitchen Prep Island Table & food (x: 190 to 360, y: 217 to 263)
     addWall(275, 240, 170, 46);
-    // Bar Counter & Stools
-    addWall(540, 330, 130, 32);
-    addWall(610, 300, 26, 64);
+    // Bar Counter & Stools (x: 518 to 642 - completely clears middle stairs at x <= 505!)
+    addWall(580, 330, 125, 32);
+    addWall(640, 300, 26, 64);
     // Bar Back Shelves with glasses & bottles (x: 510 to 620, y: 200 to 240 - clear of stairs)
     addWall(565, 220, 110, 40);
 
@@ -410,22 +435,27 @@ export default class HouseScene extends Phaser.Scene {
   }
 
   setupInputs() {
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.addKeys({
+      up: Phaser.Input.Keyboard.KeyCodes.UP,
+      down: Phaser.Input.Keyboard.KeyCodes.DOWN,
+      left: Phaser.Input.Keyboard.KeyCodes.LEFT,
+      right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+      shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
+    }, false);
     this.wasd = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
       left: Phaser.Input.Keyboard.KeyCodes.A,
       down: Phaser.Input.Keyboard.KeyCodes.S,
       right: Phaser.Input.Keyboard.KeyCodes.D,
-      interact: Phaser.Input.Keyboard.KeyCodes.E,
-      space: Phaser.Input.Keyboard.KeyCodes.SPACE
-    });
+      interact: Phaser.Input.Keyboard.KeyCodes.E
+    }, false);
 
     this.keys = this.input.keyboard.addKeys({
-      attackJ: Phaser.Input.Keyboard.KeyCodes.J,
-      attackF: Phaser.Input.Keyboard.KeyCodes.F,
-      jumpK: Phaser.Input.Keyboard.KeyCodes.K,
+      attack: Phaser.Input.Keyboard.KeyCodes.J,
+      jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
       shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
-    });
+    }, false);
 
     // Left-click for sword attack
     this.input.on('pointerdown', (pointer) => {
@@ -437,18 +467,21 @@ export default class HouseScene extends Phaser.Scene {
     // Physical hardware key tracker to guarantee no keys ever stick
     this.activeKeyCodes = new Set();
     const onKeyDown = (e) => {
+      if (this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
+        this.clearMovementInputState();
+        return;
+      }
       this.activeKeyCodes.add(e.code);
     };
     const onKeyUp = (e) => {
+      if (this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
+        this.activeKeyCodes.delete(e.code);
+        this.clearMovementInputState();
+        return;
+      }
       this.activeKeyCodes.delete(e.code);
       if (this.activeKeyCodes.size === 0) {
-        if (this.input && this.input.keyboard) {
-          this.input.keyboard.resetKeys();
-        }
-        if (this.player && this.player.body && !this.isAttacking) {
-          this.player.body.setVelocity(0, 0);
-          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
-        }
+        this.clearMovementInputState();
       }
     };
     window.addEventListener('keydown', onKeyDown);
@@ -456,20 +489,19 @@ export default class HouseScene extends Phaser.Scene {
 
     // Reset stuck keys on window blur or tab switch
     const resetAllKeys = () => {
-      this.activeKeyCodes.clear();
-      if (this.input && this.input.keyboard) {
-        this.input.keyboard.resetKeys();
-      }
-      if (this.player && this.player.body) {
-        this.player.body.setVelocity(0, 0);
-        if (!this.isAttacking) {
-          this.player.anims.play(`player-idle-${this.lastDirection}`, true);
-        }
-      }
+      this.clearMovementInputState();
     };
     window.addEventListener('blur', resetAllKeys);
-    document.addEventListener('visibilitychange', () => {
+    const onVisibilityChange = () => {
       if (document.hidden) resetAllKeys();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      resetAllKeys();
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', resetAllKeys);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     });
   }
 
@@ -571,13 +603,19 @@ export default class HouseScene extends Phaser.Scene {
 
     if (this.isInputPaused) return;
 
-    // Combat & Jump Key Triggers
-    if (Phaser.Input.Keyboard.JustDown(this.keys.attackJ) || Phaser.Input.Keyboard.JustDown(this.keys.attackF)) {
-      this.triggerAttack();
+    if (this.isTypingInputTarget()) {
+      this.clearMovementInputState();
+      return;
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.keys.jumpK)) {
+    // Jump with Space ONLY
+    if (Phaser.Input.Keyboard.JustDown(this.keys.jump) || Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
       this.triggerJump();
+    }
+
+    // Attack with J ONLY (or left mouse click)
+    if (Phaser.Input.Keyboard.JustDown(this.keys.attack)) {
+      this.triggerAttack();
     }
 
     let vx = 0;
@@ -593,6 +631,24 @@ export default class HouseScene extends Phaser.Scene {
     if (isRight) vx += 1;
     if (isUp) vy -= 1;
     if (isDown) vy += 1;
+
+    // Mobile Virtual Gamepad Input Integration
+    if (window.MobileControls) {
+      if (window.MobileControls.vx !== 0) vx = window.MobileControls.vx;
+      if (window.MobileControls.vy !== 0) vy = window.MobileControls.vy;
+      if (window.MobileControls.attackPressed) {
+        window.MobileControls.attackPressed = false;
+        this.triggerAttack();
+      }
+      if (window.MobileControls.jumpPressed) {
+        window.MobileControls.jumpPressed = false;
+        this.triggerJump();
+      }
+      if (window.MobileControls.interactPressed) {
+        window.MobileControls.interactPressed = false;
+        this.triggerActiveProjectModal();
+      }
+    }
 
     const isSprinting = this.keys.shift.isDown && (hasPhysicalKey('ShiftLeft') || hasPhysicalKey('ShiftRight'));
     const currentSpeed = isSprinting ? 215 : 135;
@@ -641,16 +697,7 @@ export default class HouseScene extends Phaser.Scene {
     // Proximity checks for stations, exit, and NPCs
     this.checkProjectProximities();
 
-    // Interact Action (Space)
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.space) || Phaser.Input.Keyboard.JustDown(this.wasd.space)) {
-      if (this.currentProject || this.currentNpc || this.isNearExit) {
-        this.triggerActiveProjectModal();
-      } else {
-        this.triggerJump();
-      }
-    }
-
-    // Interact Action (E)
+    // Interact Action (E ONLY - Space is strictly for jumping!)
     if (Phaser.Input.Keyboard.JustDown(this.wasd.interact)) {
       this.triggerActiveProjectModal();
     }

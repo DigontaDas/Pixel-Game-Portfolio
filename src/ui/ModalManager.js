@@ -90,6 +90,9 @@ export class ModalManager {
     this.isOpen = false;
     AudioFX.playClose();
     this.modalRoot.classList.add('hidden');
+    if (this.modalRoot.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
     const card = document.getElementById('modal-card-content');
     card?.classList.remove('welcome-card');
     GameBridge.emit(EVENTS.SET_INPUT_PAUSED, false);
@@ -288,7 +291,7 @@ export class ModalManager {
           <span class="station-crumb">${npc.name}</span>
         </div>
         <div class="modal-title-row">
-          <h2 class="modal-title">Scholar's Chronicles: Digonta Das</h2>
+          <h2 class="modal-title">Scholar's Chronicles: Digonta DAs</h2>
           <span class="modal-badge">BRAC University '27</span>
         </div>
         <p class="modal-tagline">${npc.bio}</p>
@@ -308,7 +311,7 @@ export class ModalManager {
         <div class="modal-side-column">
           <div class="modal-actions-box">
             <h4 class="section-heading">OFFICIAL CURRICULUM VITAE</h4>
-            <a href="${npc.cvUrl}" download="Digonta_Das_CV.pdf" class="modal-btn cv-btn">
+            <a href="${npc.cvUrl}" download="Digonta_DAs_CV.pdf" class="modal-btn cv-btn">
               DOWNLOAD COMPLETE CV (PDF)
             </a>
           </div>
@@ -330,7 +333,7 @@ export class ModalManager {
     try {
       const link = document.createElement('a');
       link.href = witch.cvUrl || '/Digonta_CV.pdf';
-      link.download = 'Digonta_Das_CV.pdf';
+      link.download = 'Digonta_DAs_CV.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -350,7 +353,7 @@ export class ModalManager {
           <span class="modal-badge" style="border-color: #a855f7; color: #d8b4fe; background: rgba(168, 85, 247, 0.2);">CV AUTO-DOWNLOADED</span>
         </div>
         <p class="modal-tagline" style="color: #e9d5ff; font-style: italic;">
-          "By the ancient compilers and the sacred sands of BRAC University! Behold, traveler: I have summoned the sacred parchment of Digonta Das directly into your archives!"
+          "By the ancient compilers and the sacred sands of BRAC University! Behold, traveler: I have summoned the sacred parchment of Digonta DAs directly into your archives!"
         </p>
       </div>
 
@@ -359,7 +362,7 @@ export class ModalManager {
           <div style="background: rgba(88, 28, 135, 0.2); border: 1px solid #7e22ce; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
             <h4 style="color: #f3e8ff; font-size: 11px; margin-top: 0; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">CURRICULUM VITAE CONJURED</h4>
             <p style="color: #d8b4fe; font-size: 13px; line-height: 1.6; margin: 0;">
-              Your browser has automatically initiated the download of <strong>Digonta_Das_CV.pdf</strong>. Check your Downloads folder to inspect Digonta's complete publication record, machine learning pipelines, and backend architectures!
+              Your browser has automatically initiated the download of <strong>Digonta_DAs_CV.pdf</strong>. Check your Downloads folder to inspect Digonta's complete publication record, machine learning pipelines, and backend architectures!
             </p>
           </div>
 
@@ -376,7 +379,7 @@ export class ModalManager {
         <div class="modal-side-column">
           <div class="modal-actions-box" style="border-color: #a855f7;">
             <h4 class="section-heading" style="color: #c084fc;">ACTIONS</h4>
-            <a href="${witch.cvUrl || '/Digonta_CV.pdf'}" download="Digonta_Das_CV.pdf" class="modal-btn cv-btn" style="background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);">
+            <a href="${witch.cvUrl || '/Digonta_CV.pdf'}" download="Digonta_DAs_CV.pdf" class="modal-btn cv-btn" style="background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);">
               DOWNLOAD AGAIN (PDF)
             </a>
             <button class="modal-btn secondary-btn" onclick="document.getElementById('modal-close-btn').click();" style="margin-top: 8px; width: 100%;">
@@ -418,7 +421,7 @@ export class ModalManager {
           <div style="background: rgba(127, 29, 29, 0.25); border: 1px solid #b91c1c; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
             <p style="color: #fecaca; font-size: 13px; line-height: 1.6; margin: 0;">
               <em>*The armored guardian lowers his heavy greataxe and recognizes your heroic armor.*</em><br><br>
-              "Hold... I recognize that aura! You are <strong>Digonta Das</strong>, the builder who conquered DataCamp, stood tall at the Infinity AI Buildfest, and mastered Computer Science at BRAC University! The seal is broken — step forth and inspect the trophies!"
+              "Hold... I recognize that aura! You are <strong>Digonta DAs</strong>, the builder who conquered DataCamp, stood tall at the Infinity AI Buildfest, and mastered Computer Science at BRAC University! The seal is broken — step forth and inspect the trophies!"
             </p>
           </div>
 
@@ -464,7 +467,7 @@ export class ModalManager {
         </div>
         <div class="modal-title-row">
           <h2 class="modal-title" style="color: #ffd166; font-size: 16px;">Welcome to My Portfolio</h2>
-          <span class="modal-badge" style="border-color: #ffd166; color: #ffd166; background: rgba(255, 209, 102, 0.15);">DIGONTA DAS</span>
+          <span class="modal-badge" style="border-color: #ffd166; color: #ffd166; background: rgba(255, 209, 102, 0.15);">DIGONTA DAs</span>
         </div>
         <p class="modal-tagline" style="color: #cbd5e1; font-size: 13px; margin: 4px 0 0;">
           Do you want to contact me, send an email to <strong style="color: #ffd166; user-select: all;">digontadas0171@gmail.com</strong>, or explore my interactive RPG world?
@@ -523,7 +526,7 @@ export class ModalManager {
         <!-- RIGHT COLUMN: FULL-SIZE TRAINER CARD IMAGE MATCHING FORM HEIGHT -->
         <div class="modal-side-column welcome-image-column" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <div class="welcome-image-container">
-            <img src="/portfolio.png" alt="Digonta Das - AI Engineer" class="welcome-profile-large-img" />
+            <img src="/portfolio.png" alt="Digonta DAs - AI Engineer" class="welcome-profile-large-img" />
           </div>
         </div>
       </div>
@@ -537,9 +540,9 @@ export class ModalManager {
           <span class="matte-label">GITHUB</span> @DigontaDas
         </a>
         <a href="https://linkedin.com/in/digonta-das-b54130282" target="_blank" rel="noopener noreferrer" class="matte-link-pill" title="LinkedIn Profile">
-          <span class="matte-label">LINKEDIN</span> Digonta Das
+          <span class="matte-label">LINKEDIN</span> Digonta DAs
         </a>
-        <a href="/Digonta_CV.pdf" download="Digonta_Das_CV.pdf" class="matte-link-pill" title="Download Official Resume PDF">
+        <a href="/Digonta_CV.pdf" download="Digonta_DAs_CV.pdf" class="matte-link-pill" title="Download Official Resume PDF">
           <span class="matte-label">RESUME</span> PDF Download
         </a>
       </div>
@@ -558,7 +561,7 @@ export class ModalManager {
 
     sendBtn?.addEventListener('click', () => {
       const email = document.getElementById('contact-sender-email')?.value.trim();
-      const subject = document.getElementById('contact-subject')?.value.trim() || 'Portfolio Inquiry for Digonta Das';
+      const subject = document.getElementById('contact-subject')?.value.trim() || 'Portfolio Inquiry for Digonta DAs';
       const message = document.getElementById('contact-message')?.value.trim() || 'Hello Digonta,\n\nI would love to connect regarding an opportunity.';
 
       const bodyText = `From: ${email || 'Portfolio Visitor'}\n\n${message}`;

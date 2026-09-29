@@ -53,7 +53,7 @@ export class HUD {
           <a href="${PERSONAL_INFO.socials.linkedin}" target="_blank" rel="noopener noreferrer" class="hud-btn social-mini-btn" title="Connect on LinkedIn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
           </a>
-          <a href="${PERSONAL_INFO.socials.cvFile}" download="Digonta_Das_CV.pdf" class="hud-btn cv-btn" title="Download Official PDF Resume">
+          <a href="${PERSONAL_INFO.socials.cvFile}" download="Digonta_DAs_CV.pdf" class="hud-btn cv-btn" title="Download Official PDF Resume">
             RESUME PDF
           </a>
           <button class="hud-btn contact-btn" id="open-welcome-modal-btn" title="Contact Digonta or view portfolio menu" style="background: rgba(255, 209, 102, 0.15); border-color: #ffd166; color: #ffd166; font-weight: 700;">
@@ -148,6 +148,7 @@ export class HUD {
     document.body.appendChild(container);
     this.renderHearts();
     this.renderSkills();
+    this.setSkillsPanelVisible(false);
     this.setupAudioButton();
     this.setupQuickMenus();
   }
@@ -172,10 +173,12 @@ export class HUD {
 
     GameBridge.on(EVENTS.HIGHLIGHT_SKILLS, (skillIds) => {
       this.highlightSkills(skillIds);
+      this.setSkillsPanelVisible(true);
     });
 
     GameBridge.on(EVENTS.RESET_SKILLS, () => {
       this.resetSkills();
+      this.setSkillsPanelVisible(false);
     });
   }
 
@@ -300,6 +303,12 @@ export class HUD {
     if (el) {
       el.textContent = `${this.inspectedRelics.size} / ${CERTIFICATES_MATRIX.length} CERTS`;
     }
+  }
+
+  setSkillsPanelVisible(visible) {
+    const panel = document.getElementById('skills-panel');
+    if (!panel) return;
+    panel.classList.toggle('hidden', !visible);
   }
 
   highlightSkills(skillIds) {
