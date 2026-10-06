@@ -72,6 +72,7 @@ export default class VillageScene extends Phaser.Scene {
       this.isInputPaused = paused;
       if (this.activeKeyCodes) this.activeKeyCodes.clear();
       if (this.input && this.input.keyboard) {
+        this.input.keyboard.enabled = !paused;
         this.input.keyboard.resetKeys();
       }
       if (this.player && this.player.body) {
@@ -1134,9 +1135,9 @@ export default class VillageScene extends Phaser.Scene {
     this.player.setDepth(this.spawnCoords.y);
     this.player.setScale(1.35);
 
-    // Precise foot hitbox
-    this.player.body.setSize(18, 12);
-    this.player.body.setOffset(23, 46);
+    // Precise foot hitbox for smooth navigation
+    this.player.body.setSize(14, 10);
+    this.player.body.setOffset(25, 48);
     this.player.setCollideWorldBounds(true);
 
     // Collide with obstacles, buildings, interactive bushes, and ALL NPCs so character CANNOT go through them
@@ -1202,6 +1203,11 @@ export default class VillageScene extends Phaser.Scene {
       shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
     }, false);
 
+    // Prevent Phaser from intercepting text keys (like Space) in forms
+    if (this.input.keyboard.clearCaptures) {
+      this.input.keyboard.clearCaptures();
+    }
+
     // Left-click is the single desktop attack control.
     this.input.on('pointerdown', (pointer) => {
       if (pointer.leftButtonDown() && !this.isInputPaused) {
@@ -1212,7 +1218,7 @@ export default class VillageScene extends Phaser.Scene {
     // Physical hardware key tracker to guarantee no keys ever stick
     this.activeKeyCodes = new Set();
     const onKeyDown = (e) => {
-      if (this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
+      if (this.isInputPaused || this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
         this.clearMovementInputState();
         return;
       }
@@ -1647,7 +1653,7 @@ export default class VillageScene extends Phaser.Scene {
           platform: "LinkedIn",
           username: "Digonta Das",
           url: PERSONAL_INFO.socials.linkedin,
-          tagline: "Connect with Digonta for AI Engineering, Research Collaborations, and Opportunities."
+          tagline: "Connect with Digonta for Full-Stack Development, Engineering Roles, and Collaborations."
         });
         break;
       case 'scholar':

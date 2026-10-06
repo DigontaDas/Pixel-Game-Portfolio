@@ -1,3 +1,6 @@
+https://pixel-game-portfolio-nine.vercel.app/
+https://digonta-das.vercel.app/
+
 # Digonta Das | Interactive 16-Bit RPG Portfolio
 
 An interactive, gamified 2D top-down RPG developer portfolio built with **Phaser 4**, **Vite**, and **Vanilla JavaScript/CSS**. Explore an open medieval fantasy realm, tour research laboratories, inspect AI/ML and full-stack projects, sparring with training dummies, and interact with characters to review credentials and roadmaps.
@@ -6,8 +9,9 @@ An interactive, gamified 2D top-down RPG developer portfolio built with **Phaser
 
 ## Live Demo & Links
 
-- **Repository**: [https://github.com/DigontaDas/Pixel-Game-Portfolio](https://github.com/DigontaDas/Pixel-Game-Portfolio)
-- **Live Deployment**: Deployable via GitHub Pages or Vercel (see deployment guide below).
+- **Main Portfolio (3D)**: [digonta-das.vercel.app](https://digonta-das.vercel.app/)
+- **Interactive RPG Portfolio**: [digontadas.github.io/Pixel-Game-Portfolio](https://digontadas.github.io/Pixel-Game-Portfolio/)
+- **RPG Portfolio Source**: [GitHub repository](https://github.com/DigontaDas/Pixel-Game-Portfolio)
 
 ---
 

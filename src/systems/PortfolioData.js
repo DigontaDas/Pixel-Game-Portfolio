@@ -5,7 +5,7 @@
 
 export const PERSONAL_INFO = {
   name: "Digonta Das",
-  title: "AI Engineer | Computer Vision Engineer | Web Developer",
+  title: "Full Stack Developer | Web & Software Engineer",
   email: "digontadas0171@gmail.com",
   phone: "+8801790029046",
   location: "Dhaka, Bangladesh",

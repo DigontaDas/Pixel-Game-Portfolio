@@ -70,6 +70,7 @@ export default class HouseScene extends Phaser.Scene {
       this.isInputPaused = paused;
       if (this.activeKeyCodes) this.activeKeyCodes.clear();
       if (this.input && this.input.keyboard) {
+        this.input.keyboard.enabled = !paused;
         this.input.keyboard.resetKeys();
       }
       if (this.player && this.player.body) {
@@ -131,27 +132,27 @@ export default class HouseScene extends Phaser.Scene {
     // 1. Thick Outer Boundary Barriers (Guarantees player cannot glitch out of bounds)
     addWall(550, 40, 1120, 80);    // North outer border
     addWall(550, 600, 1120, 80);   // South outer border
-    addWall(20, 310, 40, 620);     // West outer border
+    addWall(10, 310, 20, 620);     // West outer border (clears cellar stairs at x: 20 to 80)
     addWall(1080, 310, 80, 620);   // East outer border
 
     // 2. Room Perimeter Walls
-    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 140, x=45 to 400)
-    addWall(222, 70, 355, 140);
-    // Stone bread oven upper block (x: 400 to 505, y: 0 to 155)
-    addWall(452, 77, 105, 155);
+    // North Wall Kitchen (covers back wall, stove, cooking pots, hood, and chimney flue: y=0 to 120, x=45 to 400)
+    addWall(222, 60, 355, 120);
+    // Stone bread oven upper kitchen edge (x: 400 to 425, y: 0 to 110)
+    addWall(412, 55, 25, 110);
+    // North wall above middle stairs (stops at y=70, keeping top landing at y: 70-220 completely free!)
+    addWall(470, 35, 80, 70);
 
-    // North Wall Grand Hall / Bar Backroom (y=40 to 175, x=505 to 835)
-    addWall(670, 107, 330, 135);
+    // North Wall Grand Hall / Bar Backroom (y=40 to 160, x=510 to 835)
+    addWall(670, 100, 320, 120);
 
     // North Wall Second Floor (Elevated VIP Dining Room):
     // Wood paneling and windows above elevated floor (y=40 to 110, x=835 to 1050)
     addWall(942, 75, 215, 70);
 
-    // West Wall of Second Floor (dividing it from dark void above bar counter: x=805 to 835, y=60 to 200)
-    addWall(820, 130, 30, 140);
+    // West Wall of Second Floor (dividing it from dark void above bar counter: x=805 to 835, y=60 to 190)
+    addWall(820, 125, 30, 130);
 
-    // West Wall (clears cellar stairs at x: 20 to 80)
-    addWall(10, 310, 20, 620);
     // East Wall (x=1020 to 1100, y=175 to 570)
     addWall(1050, 370, 70, 400);
     // South Wall Left of doorway (x=60 to 495, y=550 to 620)
@@ -201,7 +202,6 @@ export default class HouseScene extends Phaser.Scene {
     addWall(930, 135, 54, 40);   // Elevated VIP round table & chairs (x: 903 to 957, y: 115 to 155)
     addWall(875, 105, 22, 20);   // Potted plant top left
     addWall(1030, 105, 22, 20);  // Potted plant top right
-    addWall(910, 260, 16, 24);   // Narrow torch post on stairs (wide open passage on both sides)
 
     // Grand Hall Chandelier Columns / Torches
     addWall(650, 420, 28, 28);
@@ -416,9 +416,9 @@ export default class HouseScene extends Phaser.Scene {
     this.player.setDepth(10);
     this.player.setScale(1.35);
 
-    // Precise foot hitbox
-    this.player.body.setSize(18, 12);
-    this.player.body.setOffset(23, 46);
+    // Precise foot hitbox for smooth corridor & stairway navigation
+    this.player.body.setSize(14, 10);
+    this.player.body.setOffset(25, 48);
     this.player.setCollideWorldBounds(true);
 
     // Collide with walls AND all NPCs so player CANNOT walk through anyone
@@ -454,6 +454,11 @@ export default class HouseScene extends Phaser.Scene {
       shift: Phaser.Input.Keyboard.KeyCodes.SHIFT
     }, false);
 
+    // Prevent Phaser from intercepting text keys (like Space) in forms
+    if (this.input.keyboard.clearCaptures) {
+      this.input.keyboard.clearCaptures();
+    }
+
     // Left-click is the single desktop attack control.
     this.input.on('pointerdown', (pointer) => {
       if (pointer.leftButtonDown() && !this.isInputPaused) {
@@ -464,7 +469,7 @@ export default class HouseScene extends Phaser.Scene {
     // Physical hardware key tracker to guarantee no keys ever stick
     this.activeKeyCodes = new Set();
     const onKeyDown = (e) => {
-      if (this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
+      if (this.isInputPaused || this.isTypingInputTarget(e.target) || this.isTypingInputTarget()) {
         this.clearMovementInputState();
         return;
       }

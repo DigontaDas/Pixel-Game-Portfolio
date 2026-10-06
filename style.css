@@ -1179,7 +1179,7 @@ button, a {
     width: min(560px, calc(100vw - 18px));
     padding: 8px;
     left: 50%;
-    bottom: 12px;
+    bottom: 135px;
   }
 
   .hud-controls-card {
@@ -1192,7 +1192,7 @@ button, a {
   .hud-left-skills {
     width: min(94vw, 420px);
     padding: 8px;
-    bottom: 12px;
+    bottom: 135px;
   }
 
   .skills-sidebar-header {

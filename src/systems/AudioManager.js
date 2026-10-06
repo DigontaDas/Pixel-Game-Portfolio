@@ -7,15 +7,12 @@ class AudioManager {
   constructor() {
     this.ctx = null;
     this.muted = false;
-    try {
-      this.muted = localStorage.getItem('digonta_rpg_muted') === 'true';
-    } catch (e) {}
     this.lastStepTime = 0;
 
     // BGM (Background Music) system
     this.bgmAudio = null;
     this.bgmStarted = false;
-    this.bgmVolume = 0.30;
+    this.bgmVolume = 0.35;
     this.bgmTracks = [
       '/assets/audio/bgm_littleroot_town.mp3',
       '/assets/audio/bgm_route101.mp3'
@@ -29,18 +26,19 @@ class AudioManager {
   _startBGMOnInteraction() {
     if (typeof window === "undefined") return;
 
+    const events = ['click', 'keydown', 'pointerdown', 'touchstart', 'mousedown'];
     const startHandler = () => {
       this.startMusic();
-      window.removeEventListener('click', startHandler);
-      window.removeEventListener('keydown', startHandler);
-      window.removeEventListener('pointerdown', startHandler);
-      window.removeEventListener('touchstart', startHandler);
+      events.forEach(evt => {
+        window.removeEventListener(evt, startHandler, true);
+        document.removeEventListener(evt, startHandler, true);
+      });
     };
 
-    window.addEventListener('click', startHandler, { once: false, passive: true });
-    window.addEventListener('keydown', startHandler, { once: false, passive: true });
-    window.addEventListener('pointerdown', startHandler, { once: false, passive: true });
-    window.addEventListener('touchstart', startHandler, { once: false, passive: true });
+    events.forEach(evt => {
+      window.addEventListener(evt, startHandler, { capture: true, passive: true });
+      document.addEventListener(evt, startHandler, { capture: true, passive: true });
+    });
   }
 
   startMusic() {
@@ -48,7 +46,11 @@ class AudioManager {
     this.playBGM();
     if (this.bgmAudio) {
       this.bgmAudio.volume = this.muted ? 0 : this.bgmVolume;
-      if (!this.muted) this.bgmAudio.play().catch(() => {});
+      if (!this.muted) {
+        this.bgmAudio.play().then(() => {
+          this.bgmStarted = true;
+        }).catch(() => {});
+      }
     }
     const icon = document.getElementById('audio-icon');
     const btn = document.getElementById('audio-toggle-btn');
@@ -139,6 +141,13 @@ class AudioManager {
     // Also mute/unmute BGM
     if (this.bgmAudio) {
       this.bgmAudio.volume = this.muted ? 0 : this.bgmVolume;
+      if (!this.muted && (this.bgmAudio.paused || !this.bgmStarted)) {
+        this.bgmAudio.play().then(() => {
+          this.bgmStarted = true;
+        }).catch(() => {});
+      }
+    } else if (!this.muted) {
+      this.startMusic();
     }
 
     return this.muted;
